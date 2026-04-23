@@ -70,3 +70,16 @@ class WorkItemRead(WorkItemBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class WorkItemClassificationInput(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    description: str = ""
+    tags: list[str] = Field(default_factory=list)
+
+
+class WorkItemClassification(BaseModel):
+    suggested_type: WorkItemType
+    suggested_priority: WorkItemPriority
+    suggested_tags: list[str] = Field(default_factory=list)
+    reasons: list[str] = Field(default_factory=list)

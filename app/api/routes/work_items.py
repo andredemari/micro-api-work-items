@@ -2,7 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.schemas.work_items import WorkItemCreate, WorkItemRead, WorkItemUpdate
+from app.schemas.work_items import (
+    WorkItemClassification,
+    WorkItemClassificationInput,
+    WorkItemCreate,
+    WorkItemRead,
+    WorkItemUpdate,
+)
+from app.services.classifier import classify_work_item as classify_work_item_service
 from app.services import work_items as work_item_service
 
 router = APIRouter(prefix="/work-items", tags=["work-items"])
@@ -19,6 +26,13 @@ def create_work_item(
 @router.get("", response_model=list[WorkItemRead])
 def list_work_items(db: Session = Depends(get_db)) -> list[WorkItemRead]:
     return work_item_service.list_work_items(db)
+
+
+@router.post("/classify", response_model=WorkItemClassification)
+def classify_work_item(
+    payload: WorkItemClassificationInput,
+) -> WorkItemClassification:
+    return classify_work_item_service(payload)
 
 
 @router.get("/{work_item_id}", response_model=WorkItemRead)
