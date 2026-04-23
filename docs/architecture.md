@@ -25,3 +25,13 @@ The classifier endpoint follows a separate flow: it validates input, applies loc
 The MVP uses SQLite through SQLAlchemy. The application reads `DATABASE_URL` from the operating system environment and defaults to `sqlite:///./work_items.db`.
 
 The project does not use `python-dotenv`; `.env.example` is only a reference file.
+
+## API Routes
+
+- `GET /health`
+- `POST /work-items`
+- `GET /work-items`
+- `GET /work-items/{id}`
+- `PATCH /work-items/{id}`
+- `DELETE /work-items/{id}`
+- `POST /work-items/classify`
