@@ -4,6 +4,7 @@ from collections.abc import AsyncIterator
 from fastapi import FastAPI
 
 from app.api.routes.health import router as health_router
+from app.api.routes.work_items import router as work_items_router
 from app.db.database import init_db
 
 
@@ -21,3 +22,4 @@ app = FastAPI(
 )
 
 app.include_router(health_router)
+app.include_router(work_items_router)
