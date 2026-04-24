@@ -68,6 +68,12 @@ def test_invalid_enum_values_return_validation_errors(client: TestClient) -> Non
     assert response.status_code == 422
 
 
+def test_missing_required_title_returns_validation_error(client: TestClient) -> None:
+    response = client.post("/work-items", json={"status": "open"})
+
+    assert response.status_code == 422
+
+
 def test_missing_work_item_returns_404(client: TestClient) -> None:
     assert client.get("/work-items/999").status_code == 404
     assert client.patch("/work-items/999", json={"status": "done"}).status_code == 404

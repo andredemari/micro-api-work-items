@@ -4,10 +4,10 @@ from collections.abc import Generator
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-os.environ["DATABASE_URL"] = "sqlite:///./test_work_items.db"
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 from app.db import models  # noqa: E402,F401
 from app.db.database import Base, get_db  # noqa: E402
@@ -24,6 +24,19 @@ TestingSessionLocal = sessionmaker(
     bind=test_engine,
     expire_on_commit=False,
 )
+
+
+@pytest.fixture()
+def db_session() -> Generator[Session, None, None]:
+    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        Base.metadata.drop_all(bind=test_engine)
 
 
 @pytest.fixture()
