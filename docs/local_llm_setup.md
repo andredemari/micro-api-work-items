@@ -44,6 +44,7 @@ ollama list
 
 ```bash
 curl http://localhost:11434/api/generate \
+  -H "Content-Type: application/json" \
   -d '{"model":"<model-name>","prompt":"Return the word ok.","stream":false}'
 ```
 
@@ -72,6 +73,20 @@ Start with a small or medium local model suitable for quick local testing. Very 
 GPU VRAM affects model performance, usable context length, and response latency. Ollama may choose defaults based on available hardware and model configuration. Treat this as practical guidance, not a guarantee of performance.
 
 For this project, short prompts and short outputs are enough for a future PriorityAdvisor experiment. There is no need to start with a large general-purpose model.
+
+## Minimum Practical Configurations
+
+These ranges are practical guidance for experimentation, not guarantees. Model size, quantization, context length, and output length all affect memory use and latency.
+
+| Local setup | Practical expectation |
+| --- | --- |
+| CPU-only / low-memory | Possible for very small models, but slower and not recommended for responsive API usage. |
+| 16 GB RAM | Small quantized models for experimentation. |
+| 32 GB RAM | Small to medium quantized models with more comfortable local testing. |
+| GPU with 8-12 GB VRAM | Good starting point for small/medium local models and short prompts. |
+| GPU with 16-24 GB+ VRAM | More comfortable for larger models or longer context. |
+
+For this project's future PriorityAdvisor experiment, short prompts and short outputs are sufficient. No specific model is mandatory.
 
 ## Suggested Baseline For This Project
 
