@@ -12,6 +12,18 @@ The objective is to demonstrate a simple backend MVP with clear scope, local per
 
 This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering with Generative AI" at UFG/AKCIT.
 
+The course reference problem is a "Micro-API de Tarefas". This repository implements the same small API idea using the more generic term "work item", so the API can represent tasks, bugs, improvements, research items, operation items, and incidents without becoming domain-specific.
+
+| Course operation | This project |
+| --- | --- |
+| Criar tarefa | `POST /work-items` |
+| Listar tarefas | `GET /work-items` |
+| Atualizar status/prioridade | `PATCH /work-items/{id}` |
+| Excluir tarefa | `DELETE /work-items/{id}` |
+| Sugerir prioridade/classificação | `POST /work-items/classify` |
+
+The course PriorityAdvisor concept is represented by the local deterministic classifier. Runtime integration with external AI providers is intentionally out of scope for this MVP.
+
 ## Stack
 
 - Python 3.11+

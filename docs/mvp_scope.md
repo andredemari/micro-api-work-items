@@ -4,6 +4,20 @@
 
 Build a small public REST API for managing generic work items with local SQLite persistence, automated tests, documentation, and a deterministic local classifier.
 
+The course reference problem is a "Micro-API de Tarefas". This project keeps the same MVP idea but uses the generic term "work item" instead of "task".
+
+## Course Scope Mapping
+
+| Course operation | This project |
+| --- | --- |
+| Criar tarefa | `POST /work-items` |
+| Listar tarefas | `GET /work-items` |
+| Atualizar status/prioridade | `PATCH /work-items/{id}` |
+| Excluir tarefa | `DELETE /work-items/{id}` |
+| Sugerir prioridade/classificação | `POST /work-items/classify` |
+
+The course PriorityAdvisor concept is represented by the local deterministic classifier. External AI runtime integration is intentionally out of scope for this MVP.
+
 ## In Scope
 
 - Health check endpoint.
