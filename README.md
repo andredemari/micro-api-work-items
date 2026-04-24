@@ -252,6 +252,7 @@ The test suite covers:
 - [docs/demo.md](docs/demo.md): short technical demo script.
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
 - [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
+- [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future external provider planning.
 - [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
 - [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 

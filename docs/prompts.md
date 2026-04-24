@@ -28,6 +28,7 @@ This document records public, generic prompts used to support academic reproduci
 | P-011 | Review | Checklist-based review | Validate scope limits, local-only runtime behavior, public-safe docs, tracked artifacts, and final course guidance. | Review notes and final hardening tasks. | `docs/mvp_scope.md`, `docs/release_checklist.md` | `docs: add backlog demo and release checklist` |
 | P-012 | Final documentation/release | Release readiness | Add backlog, demo script, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/demo.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
 | P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
+| P-014 | External provider planning | Provider-agnostic future planning | Document optional external provider constraints, safety controls, fallback behavior, and mock-only test strategy without implementing runtime integration. | External provider planning guidance. | `docs/external_provider_plan.md`, `docs/refactor_backlog.md` | `docs: add external provider planning guidance` |
 
 ## Compact Sanitized Prompt Examples
 
@@ -82,6 +83,10 @@ Prepare final academic submission documentation with backlog, demo script, relea
 ### P-013 Local LLM Planning
 
 Document optional local LLM setup with Ollama for future experimentation, keeping current runtime behavior unchanged and avoiding provider code, credentials, dependencies, or environment variables.
+
+### P-014 External Provider Planning
+
+Document future optional external provider integration in provider-agnostic terms, requiring credential safety, timeouts, schema validation, local fallback, privacy controls, and mock-only tests before any implementation.
 
 ## Privacy And Scope Rules
 
