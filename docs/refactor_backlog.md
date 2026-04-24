@@ -15,8 +15,8 @@ The current application is organized as a small FastAPI backend:
 - `app/models/work_item_model.py` contains the SQLAlchemy persistence model.
 - `app/db/database.py` contains database engine, session, and schema initialization.
 - `app/services/work_items.py` contains CRUD service logic.
-- `app/services/classifier.py` contains deterministic local classification rules.
-- `tests/` contains API, service, and classifier tests.
+- `app/services/priority_advisor.py` contains deterministic local PriorityAdvisor rules.
+- `tests/` contains API, service, repository, and PriorityAdvisor tests.
 
 The current public API must remain unchanged:
 
@@ -107,7 +107,7 @@ This distinction is important because the course may use the term "model" broadl
 | `app/schemas/work_items.py` | `app/schemas/work_items.py` | Pydantic API contracts | Keep location and public schema behavior. |
 | `app/services/work_items.py` | `app/services/work_item_service.py` | Work item service orchestration | Rename only when low risk. |
 | none | `app/repositories/work_item_repository.py` | Persistence access isolation | Add without changing API behavior. |
-| `app/services/classifier.py` | `app/services/priority_advisor.py` | PriorityAdvisor orchestration | Preserve current classifier output. |
+| `app/services/priority_advisor.py` | `app/services/priority_advisor.py` | PriorityAdvisor orchestration | Preserve current classifier output. |
 | none | `app/providers/priority/local_provider.py` | Deterministic local fallback | Default provider must remain local. |
 | none | future-only optional provider modules | Optional LLM provider adapters | Do not create until separately approved. |
 
@@ -264,7 +264,7 @@ Near-term planning should stay at Level 1 or Level 2.
 | REF-002 | 1 | Move SQLAlchemy model to models layer | Separate database models from database setup | `app/models/work_item_model.py`, imports | Full suite | Table behavior unchanged; tests pass | Done |
 | REF-003 | 2 | Add work item repository | Isolate SQLAlchemy persistence operations | `app/repositories/work_item_repository.py`, service imports | Repository/service/API tests | Service uses repository; API unchanged | Done |
 | REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
-| REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Planned |
+| REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Done |
 | REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Future |
 | REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | docs first, later future provider module | Mocked tests only | Missing local provider does not break app | Future |
 | REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | docs first, later future provider module | Mocked tests only | No credentials required by default | Future |
@@ -381,18 +381,14 @@ docs: update architecture after refactor phases
 
 Each implementation commit should be small and behavior-preserving unless a future change is explicitly approved.
 
-## Recommended First Implementation Task After Planning
+## Recommended Next Planning Step
 
-After this planning document is committed, the safest first implementation task is:
+The completed refactor tasks now cover REF-001 through REF-005. The next roadmap item is REF-006:
 
 ```text
-refactor: add repository layer for work items
+REF-006: Add local provider interface
 ```
 
-Reason:
+REF-006 should be planned separately before any implementation. That plan should confirm whether a provider interface is still useful, how to keep local deterministic behavior as the default, and how to avoid adding external providers, credentials, environment variables, or new dependencies.
 
-- It improves layering without changing public routes.
-- It keeps folder renaming churn lower than a full controller/model move.
-- It reduces coupling before broader folder moves.
-- It can be verified with existing service/API tests plus small repository tests.
-- It prepares the service layer for later PriorityAdvisor and provider refactors.
+This documentation consistency patch does not implement REF-006.

@@ -9,7 +9,7 @@ from app.schemas.work_items import (
     WorkItemRead,
     WorkItemUpdate,
 )
-from app.services.classifier import classify_work_item as classify_work_item_service
+from app.services.priority_advisor import advise_work_item as classify_work_item_service
 from app.services import work_items as work_item_service
 
 router = APIRouter(prefix="/work-items", tags=["work-items"])

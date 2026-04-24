@@ -44,8 +44,8 @@ PRIORITY_RULES: tuple[tuple[WorkItemPriority, tuple[str, ...]], ...] = (
 )
 
 
-def classify_work_item(payload: WorkItemClassificationInput) -> WorkItemClassification:
-    """Suggest work item classification using deterministic local rules only."""
+def advise_work_item(payload: WorkItemClassificationInput) -> WorkItemClassification:
+    """Suggest work item classification using deterministic PriorityAdvisor rules."""
     text = _combined_text(payload)
     reasons: list[str] = []
 

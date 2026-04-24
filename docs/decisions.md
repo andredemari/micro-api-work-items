@@ -22,27 +22,29 @@ Flask would also be a valid option for a small API, but FastAPI was chosen becau
 
 SQLAlchemy reserves the `metadata` attribute on declarative models. The database column is still named `metadata`, but the Python model uses `metadata_json` internally and the API exposes `metadata`.
 
-## Repository Layer Deferred For MVP
+## Repository Layer Introduced After MVP Hardening
 
-An explicit `app/repositories/work_items.py` layer was considered, but it would mostly add indirection for the current MVP. The service layer currently performs a small set of simple SQLAlchemy operations, so keeping that access local is easier to read for an introductory academic project.
+The repository layer was introduced after the initial MVP hardening phase to better align the project with the course layered architecture.
 
-This decision can be revisited if persistence logic grows, if multiple storage backends are introduced, or if repository-level tests become more useful than the current service/API test boundary.
+`app/repositories/` isolates SQLAlchemy persistence operations such as create, list, get, update, and delete. The service layer keeps application orchestration and delegates persistence details to the repository.
+
+The repository layer is intentionally small and behavior-preserving. It does not change public routes, schemas, response formats, database tables, or runtime behavior.
 
 ## PATCH Only For Updates
 
 The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionally not included.
 
-## Separate Classifier Flow
+## Separate PriorityAdvisor Flow
 
-`POST /work-items/classify` is side-effect free. It receives input data, applies local rules, and returns suggestions without reading or writing persisted work items.
+`POST /work-items/classify` is side-effect free. It receives input data, delegates to the local PriorityAdvisor, applies deterministic rules, and returns suggestions without reading or writing persisted work items.
 
-## Local Deterministic Classification
+## Local Deterministic PriorityAdvisor
 
 Classification uses keyword rules only. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
 
 ## External AI Runtime Integration Deferred
 
-Runtime integration with external AI providers is out of scope for this MVP. The classifier is intentionally local, deterministic, and usable without credentials or paid API calls.
+Runtime integration with external AI providers is out of scope for this MVP. The PriorityAdvisor is intentionally local, deterministic, and usable without credentials or paid API calls.
 
 If external AI integration is explored in a future version, it should be optional and should include credential management, timeout handling, error handling, and a local deterministic fallback. This project does not introduce provider variables or runtime AI behavior.
 
