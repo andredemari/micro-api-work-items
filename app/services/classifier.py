@@ -45,6 +45,7 @@ PRIORITY_RULES: tuple[tuple[WorkItemPriority, tuple[str, ...]], ...] = (
 
 
 def classify_work_item(payload: WorkItemClassificationInput) -> WorkItemClassification:
+    """Suggest work item classification using deterministic local rules only."""
     text = _combined_text(payload)
     reasons: list[str] = []
 
@@ -94,6 +95,7 @@ def _suggest_tags(
     suggested_type: WorkItemType,
     suggested_priority: WorkItemPriority,
 ) -> list[str]:
+    """Normalize user tags and append deduplicated rule-based suggestions."""
     normalized_tags = [tag.strip().lower() for tag in tags if tag.strip()]
     suggestions = [*normalized_tags, suggested_type.value]
 

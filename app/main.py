@@ -10,6 +10,7 @@ from app.db.database import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Initialize local persistence before the FastAPI app starts serving."""
     init_db()
     yield
 

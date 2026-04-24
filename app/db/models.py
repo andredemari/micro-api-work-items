@@ -7,10 +7,13 @@ from app.db.database import Base
 
 
 def utc_now() -> datetime:
+    """Return a timezone-aware UTC timestamp for persisted records."""
     return datetime.now(timezone.utc)
 
 
 class WorkItem(Base):
+    """SQLAlchemy persistence model for a generic work item."""
+
     __tablename__ = "work_items"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

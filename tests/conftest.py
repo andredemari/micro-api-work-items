@@ -28,6 +28,7 @@ TestingSessionLocal = sessionmaker(
 
 @pytest.fixture()
 def db_session() -> Generator[Session, None, None]:
+    """Provide an isolated in-memory database session for service tests."""
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
 
@@ -41,6 +42,7 @@ def db_session() -> Generator[Session, None, None]:
 
 @pytest.fixture()
 def client() -> Generator[TestClient, None, None]:
+    """Provide a TestClient wired to the isolated in-memory database."""
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
 

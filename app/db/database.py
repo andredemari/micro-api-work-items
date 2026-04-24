@@ -12,6 +12,7 @@ connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite")
 
 
 def ensure_sqlite_parent_directory(database_url: str) -> None:
+    """Create the parent directory for file-based SQLite databases."""
     url = make_url(database_url)
     if url.get_backend_name() != "sqlite" or not url.database:
         return
@@ -34,16 +35,19 @@ SessionLocal = sessionmaker(
 
 
 class Base(DeclarativeBase):
+    """Base class for SQLAlchemy ORM models."""
     pass
 
 
 def init_db() -> None:
+    """Create database tables for the local SQLite-backed MVP."""
     from app.db import models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 
 
 def get_db() -> Generator[Session, None, None]:
+    """Yield a database session and close it after the request finishes."""
     db = SessionLocal()
     try:
         yield db
