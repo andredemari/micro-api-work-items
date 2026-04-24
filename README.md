@@ -1,8 +1,26 @@
 # micro-api-work-items
 
-micro-api-work-items is a small academic REST API for managing work items with FastAPI, SQLite, automated tests, and local deterministic classification rules.
+micro-api-work-items is a small academic REST API for managing generic work items with FastAPI, SQLite, automated tests, and local deterministic classification rules.
 
 A work item is a generic task-like record that can represent a task, bug, improvement, research item, operation item, or incident.
+
+## Table Of Contents
+
+- [Objective](#objective)
+- [Academic Context](#academic-context)
+- [Quick Start](#quick-start)
+- [Setup Details](#setup-details)
+- [Project Structure](#project-structure)
+- [Architecture Overview](#architecture-overview)
+- [Endpoints](#endpoints)
+- [API Example Flow](#api-example-flow)
+- [Tests](#tests)
+- [Documentation Map](#documentation-map)
+- [Troubleshooting](#troubleshooting)
+- [Limitations](#limitations)
+- [How Generative AI Was Used](#how-generative-ai-was-used)
+- [Packaging And Submission Notes](#packaging-and-submission-notes)
+- [License](#license)
 
 ## Objective
 
@@ -12,15 +30,15 @@ The objective is to demonstrate a simple backend MVP with clear scope, local per
 
 This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering with Generative AI" at UFG/AKCIT.
 
-The course reference problem is a "Micro-API de Tarefas". This repository implements the same small API idea using the more generic term "work item", so the API can represent tasks, bugs, improvements, research items, operation items, and incidents without becoming domain-specific.
+The course reference problem is a "Micro-API de Tarefas". This project implements the same small API idea using the more generic term "work item", so the API can represent tasks, bugs, improvements, research items, operation items, and incidents without becoming domain-specific.
 
-| Course operation | This project |
-| --- | --- |
-| Criar tarefa | `POST /work-items` |
-| Listar tarefas | `GET /work-items` |
-| Atualizar status/prioridade | `PATCH /work-items/{id}` |
-| Excluir tarefa | `DELETE /work-items/{id}` |
-| Sugerir prioridade/classificação | `POST /work-items/classify` |
+| Course operation (PT) | Meaning (EN) | This project |
+| --- | --- | --- |
+| Criar tarefa | Create a work item | `POST /work-items` |
+| Listar tarefas | List work items | `GET /work-items` |
+| Atualizar status/prioridade | Partially update status or priority | `PATCH /work-items/{id}` |
+| Excluir tarefa | Delete a work item | `DELETE /work-items/{id}` |
+| Sugerir prioridade/classificação | Suggest priority and classification | `POST /work-items/classify` |
 
 The course PriorityAdvisor concept is represented by the local deterministic classifier. Runtime integration with external AI providers is intentionally out of scope for this MVP.
 
@@ -35,11 +53,27 @@ The course PriorityAdvisor concept is represented by the local deterministic cla
 - Pytest
 - HTTPX through FastAPI testing utilities
 
-## Setup
+## Quick Start
 
-Choose one setup path. Windows users with Anaconda should usually start with Anaconda Prompt.
+Use the Makefile path first when `make` is available:
 
-Python available on PATH means the terminal can run Python by typing python. If that does not work, use Anaconda Prompt or the full Python executable path.
+```bash
+make install
+make test
+make run
+```
+
+The API will be available at `http://127.0.0.1:8000`.
+
+If `make` is not available in your shell, use the equivalent `python -m ...` commands in the setup details below.
+
+## Setup Details
+
+The app reads `DATABASE_URL` from the operating system environment. If it is not set, it defaults to `sqlite:///./data/work_items.db`.
+
+`.env.example` is a reference file only. It is not loaded automatically, and the project does not use `python-dotenv`.
+
+The application does not use a runtime external LLM provider. No `OPENAI_API_KEY`, model name, or LLM timeout configuration is required.
 
 ### Recommended For Windows Users With Anaconda: Anaconda Prompt
 
@@ -53,7 +87,7 @@ python -m uvicorn app.main:app --reload
 
 ### Alternative: Windows PowerShell With Full Anaconda Python Path
 
-If `python` is not available directly in PowerShell, use the full Anaconda Python executable path:
+Python available on PATH means the terminal can run Python by typing `python`. If that does not work, use Anaconda Prompt or the full Python executable path.
 
 ```powershell
 $PY="C:\Users\<your-user>\anaconda3\python.exe"
@@ -74,6 +108,8 @@ $PY="C:\Users\<your-user>\anaconda3\envs\micro-api-work-items\python.exe"
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python -m pytest -q
+python -m uvicorn app.main:app --reload
 ```
 
 On Windows PowerShell with `python` available:
@@ -82,6 +118,8 @@ On Windows PowerShell with `python` available:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+python -m pytest -q
+python -m uvicorn app.main:app --reload
 ```
 
 ### Alternative: Linux/WSL
@@ -90,216 +128,124 @@ python -m pip install -r requirements.txt
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-```
-
-The app reads `DATABASE_URL` from the operating system environment. If it is not set, it defaults to `sqlite:///./data/work_items.db`.
-
-`.env.example` is a reference file only. It is not loaded automatically, and the project does not use `python-dotenv`.
-
-The application does not use a runtime external LLM provider. No `OPENAI_API_KEY`, model name, or LLM timeout configuration is required.
-
-## Run
-
-```bash
+python -m pytest -q
 python -m uvicorn app.main:app --reload
 ```
 
-With a full Anaconda Python path in Windows PowerShell:
+## Project Structure
 
-```powershell
-$PY="C:\Users\<your-user>\anaconda3\python.exe"
-& $PY -m uvicorn app.main:app --reload
+```text
+.
+|-- app/
+|   |-- api/routes/        # FastAPI route handlers
+|   |-- db/                # SQLAlchemy model and session setup
+|   |-- schemas/           # Pydantic request and response schemas
+|   `-- services/          # Work item CRUD and classifier logic
+|-- data/                  # Local SQLite directory; database files are ignored
+|-- docs/                  # Architecture, scope, decisions, prompts, demo, release notes
+|-- tests/                 # API, service, and classifier tests
+|-- .env.example           # Reference-only environment variable example
+|-- Makefile               # install, run, and test commands
+|-- README.md
+`-- requirements.txt
 ```
 
-The API will be available at `http://127.0.0.1:8000`.
+Course architecture terminology maps to this FastAPI project as follows:
 
-## API Examples
+- Controller = `app/api/routes`
+- Model = `app/schemas` for API contracts and `app/db/models.py` for persistence
+- Service = `app/services`
+- Repository = deferred/omitted for this small MVP because SQLAlchemy access is simple
+- Database/session = `app/db/database.py`
 
-The `curl` examples below are intended for Bash, Git Bash, macOS/Linux terminals, WSL, or real `curl.exe`. In Windows PowerShell, `curl` may resolve to `Invoke-WebRequest`; use the PowerShell examples in the next section if needed.
+## Architecture Overview
 
-Health check:
+```mermaid
+flowchart TD
+    Client["HTTP client"] --> Routes["FastAPI routes"]
+    Routes --> Schemas["Pydantic schemas"]
+    Routes --> Services["Work item service"]
+    Services --> SQLite["SQLite via SQLAlchemy"]
+    Routes --> Classifier["Local classifier service"]
+    Classifier --> Suggestions["Suggestions only"]
+```
+
+The classifier path is side-effect free: `POST /work-items/classify` returns suggestions and does not read or write persisted work items. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
+
+## Endpoints
+
+| Method | Route | Description | Success Status | Notes |
+| --- | --- | --- | --- | --- |
+| `GET` | `/health` | Health check | `200` | Confirms service availability. |
+| `POST` | `/work-items` | Create a work item | `201` | Persists data in SQLite. |
+| `GET` | `/work-items` | List work items | `200` | Returns persisted work items. |
+| `GET` | `/work-items/{id}` | Get one work item | `200` | Missing items return `404`. |
+| `PATCH` | `/work-items/{id}` | Partially update a work item | `200` | `PUT` is intentionally not included. |
+| `DELETE` | `/work-items/{id}` | Delete a work item | `204` | Missing items return `404`. |
+| `POST` | `/work-items/classify` | Suggest type, priority, and tags | `200` | Does not persist data. |
+
+## API Example Flow
+
+The `curl` examples below are intended for Bash, Git Bash, macOS/Linux terminals, WSL, or real `curl.exe`. See [docs/api_examples.md](docs/api_examples.md) for detailed Bash and Windows PowerShell examples.
 
 ```bash
 curl http://127.0.0.1:8000/health
 ```
 
-Create a work item:
-
 ```bash
 curl -X POST http://127.0.0.1:8000/work-items \
   -H "Content-Type: application/json" \
-  -d '{
-    "title": "Fix validation error",
-    "description": "Review the validation response for a small API issue.",
-    "priority": "high",
-    "type": "bug",
-    "tags": ["api", "validation"],
-    "metadata": {"estimate": 2}
-  }'
+  -d '{"title":"Review API docs","priority":"medium","type":"task","tags":["docs"]}'
 ```
-
-List work items:
 
 ```bash
 curl http://127.0.0.1:8000/work-items
 ```
 
-Get one work item:
-
-```bash
-curl http://127.0.0.1:8000/work-items/1
-```
-
-Partially update a work item:
-
-```bash
-curl -X PATCH http://127.0.0.1:8000/work-items/1 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "in_progress", "priority": "critical"}'
-```
-
-Delete a work item:
-
-```bash
-curl -X DELETE http://127.0.0.1:8000/work-items/1
-```
-
-Classify a work item without persisting it:
-
 ```bash
 curl -X POST http://127.0.0.1:8000/work-items/classify \
   -H "Content-Type: application/json" \
-  -d '{
-    "title": "Critical incident with service outage",
-    "description": "The service is unavailable for users.",
-    "tags": ["support"]
-  }'
-```
-
-## Windows PowerShell API Examples
-
-Health check:
-
-```powershell
-Invoke-RestMethod -Uri 'http://127.0.0.1:8000/health'
-```
-
-Create a work item:
-
-```powershell
-$body = @{
-  title = 'Fix validation error'
-  description = 'Review the validation response for a small API issue.'
-  priority = 'high'
-  type = 'bug'
-  tags = @('api', 'validation')
-  metadata = @{ estimate = 2 }
-} | ConvertTo-Json
-
-Invoke-RestMethod `
-  -Uri 'http://127.0.0.1:8000/work-items' `
-  -Method Post `
-  -ContentType 'application/json' `
-  -Body $body
-```
-
-List work items:
-
-```powershell
-Invoke-RestMethod -Uri 'http://127.0.0.1:8000/work-items'
-```
-
-Partially update a work item:
-
-```powershell
-$body = @{
-  status = 'in_progress'
-  priority = 'critical'
-} | ConvertTo-Json
-
-Invoke-RestMethod `
-  -Uri 'http://127.0.0.1:8000/work-items/1' `
-  -Method Patch `
-  -ContentType 'application/json' `
-  -Body $body
-```
-
-Classify a work item without persisting it:
-
-```powershell
-$body = @{
-  title = 'Critical incident with service outage'
-  description = 'The service is unavailable for users.'
-  tags = @('support')
-} | ConvertTo-Json
-
-Invoke-RestMethod `
-  -Uri 'http://127.0.0.1:8000/work-items/classify' `
-  -Method Post `
-  -ContentType 'application/json' `
-  -Body $body
-```
-
-## Response Examples
-
-Successful work item creation returns `201 Created`. The `id`, `created_at`, and `updated_at` values are generated by the API.
-
-```json
-{
-  "title": "Fix validation error",
-  "description": "Review the validation response for a small API issue.",
-  "status": "open",
-  "priority": "high",
-  "type": "bug",
-  "source": "manual",
-  "tags": ["api", "validation"],
-  "metadata": {"estimate": 2},
-  "id": 1,
-  "created_at": "2026-04-24T12:00:00",
-  "updated_at": "2026-04-24T12:00:00"
-}
-```
-
-Missing work items return `404 Not Found`:
-
-```json
-{
-  "detail": "Work item not found."
-}
-```
-
-Invalid enum values return FastAPI's standard `422 Unprocessable Entity` validation response. For example, sending `"status": "waiting"` returns:
-
-```json
-{
-  "detail": [
-    {
-      "type": "enum",
-      "loc": ["body", "status"],
-      "msg": "Input should be 'open', 'in_progress', 'done' or 'archived'",
-      "input": "waiting",
-      "ctx": {
-        "expected": "'open', 'in_progress', 'done' or 'archived'"
-      }
-    }
-  ]
-}
+  -d '{"title":"Critical incident with service outage","description":"The service is unavailable.","tags":["support"]}'
 ```
 
 ## Tests
+
+Current verification result: `27 passed`.
+
+```bash
+make test
+```
+
+Equivalent command:
 
 ```bash
 python -m pytest -q
 ```
 
-With a full Anaconda Python path in Windows PowerShell:
+The test suite covers:
 
-```powershell
-$PY="C:\Users\<your-user>\anaconda3\python.exe"
-& $PY -m pytest -q
-```
+- health endpoint;
+- API CRUD routes;
+- `404` responses for missing work items;
+- `422` validation errors;
+- tags and metadata persistence;
+- `updated_at` behavior;
+- service-level CRUD behavior;
+- classifier service behavior;
+- deterministic classifier output;
+- classifier non-persistence;
+- isolated SQLite test database.
 
-The test suite covers health, CRUD behavior, validation errors, missing item `404` responses, tags and metadata persistence, `updated_at` behavior, and deterministic classification.
+## Documentation Map
+
+- [docs/architecture.md](docs/architecture.md): layered architecture, Mermaid diagrams, and course terminology mapping.
+- [docs/decisions.md](docs/decisions.md): technical decisions and deferred scope.
+- [docs/mvp_scope.md](docs/mvp_scope.md): MVP scope and acceptance checklist.
+- [docs/backlog.md](docs/backlog.md): release-oriented backlog.
+- [docs/demo.md](docs/demo.md): short technical demo script.
+- [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
+- [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
+- [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 
 ## Reset Local SQLite State
 
@@ -321,9 +267,10 @@ The next application startup recreates the SQLite schema automatically.
 
 ## Troubleshooting
 
-- If `python` is not recognized in PowerShell, use Anaconda Prompt or the full Anaconda Python executable path shown in the setup section.
+- If `make` is unavailable, use the `python -m ...` commands shown in setup details.
+- If `python` is not recognized in PowerShell, use Anaconda Prompt or the full Anaconda Python executable path.
 - If `uvicorn` is not recognized, run it as a module with `python -m uvicorn app.main:app --reload`.
-- If `curl` behaves differently in PowerShell, use the `Invoke-RestMethod` examples instead.
+- If `curl` behaves differently in PowerShell, use the `Invoke-RestMethod` examples in [docs/api_examples.md](docs/api_examples.md).
 - If the API returns database-related errors after manual file changes, stop the server, remove `data/work_items.db`, and start the server again.
 - `.env.example` is documentation only; environment variables must be set in the operating system if you want to override defaults.
 - No runtime external LLM provider is used, so no AI provider credentials are needed.
@@ -334,8 +281,11 @@ The next application startup recreates the SQLite schema automatically.
 - Hard delete only.
 - No authentication or authorization.
 - No pagination or advanced filtering.
+- No frontend.
+- No Docker.
+- No CI/CD.
 - Local keyword-based classification only.
-- No external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, or external integrations.
+- No external LLM runtime, external AI providers, embeddings, RAG, agents, queues, streaming, or external integrations.
 
 ## Next Steps
 
@@ -348,11 +298,24 @@ Future versions may expose the API as a reusable backend service for external cl
 
 ## How Generative AI Was Used
 
-Generative AI supported planning, scope definition, architecture discussion, implementation structure, test design, documentation drafting, review, and refinement. The project intentionally uses only local deterministic rules at runtime and does not depend on any external AI provider.
+Generative AI supported scope planning, architecture discussion, implementation scaffolding, test design, documentation drafting, review, and refinement.
 
-Final decisions, validation, testing, and acceptance were human-reviewed before inclusion in the repository.
+Human review was decisive for final scope decisions, preserving a local deterministic classifier instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
 
-See `docs/prompts.md` for generic CO-STAR prompt examples used for academic reproducibility.
+Risk mitigation included avoiding credentials, avoiding paid runtime AI providers, avoiding external data sharing, keeping runtime behavior local and deterministic, and requiring tests and review before acceptance.
+
+See [docs/prompts.md](docs/prompts.md) for generic CO-STAR prompt examples used for academic reproducibility.
+
+## Packaging And Submission Notes
+
+- Prefer submitting the GitHub repository so ignored local files remain excluded.
+- If a ZIP is required, create it from tracked files with:
+
+```bash
+git archive --format=zip --output micro-api-work-items.zip HEAD
+```
+
+- Do not zip the whole working directory manually because it may include `.git`, `.venv`, `__pycache__`, `.pytest_cache`, or local database files.
 
 ## License
 
