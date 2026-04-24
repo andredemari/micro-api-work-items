@@ -39,6 +39,24 @@ def test_classifier_detects_bug_and_high_priority() -> None:
     ]
 
 
+def test_classifier_detects_critical_incident() -> None:
+    result = classify_work_item(
+        WorkItemClassificationInput(
+            title="Critical incident",
+            description="Service unavailable for users.",
+            tags=["Ops"],
+        )
+    )
+
+    assert result.suggested_type == WorkItemType.INCIDENT
+    assert result.suggested_priority == WorkItemPriority.CRITICAL
+    assert result.suggested_tags == ["ops", "incident", "critical"]
+    assert result.reasons == [
+        "type matched keyword: incident",
+        "priority matched keyword: critical",
+    ]
+
+
 def test_classifier_normalizes_and_deduplicates_tags() -> None:
     result = classify_work_item(
         WorkItemClassificationInput(
