@@ -8,6 +8,10 @@ A work item is a generic task-like record that can represent a task, bug, improv
 
 The objective is to demonstrate a simple backend MVP with clear scope, local persistence, validation, tests, documentation, and a Conventional Commit history.
 
+## Academic Context
+
+This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering with Generative AI" at UFG/AKCIT.
+
 ## Stack
 
 - Python 3.11+
@@ -255,8 +259,14 @@ The test suite covers health, CRUD behavior, validation errors, missing item `40
 
 Future versions may expose the API as a reusable backend service for external clients, automation scripts, or agent-based tools through its HTTP/OpenAPI interface.
 
-## Generative AI Support
+## How Generative AI Was Used
 
-Generative AI supported planning, implementation structure, test coverage design, documentation drafting, and review against the acceptance checklist. The project intentionally uses only local deterministic rules at runtime and does not depend on any external AI provider.
+Generative AI supported planning, scope definition, architecture discussion, implementation structure, test design, documentation drafting, review, and refinement. The project intentionally uses only local deterministic rules at runtime and does not depend on any external AI provider.
+
+Final decisions, validation, testing, and acceptance were human-reviewed before inclusion in the repository.
 
 See `docs/prompts.md` for generic CO-STAR prompt examples used for academic reproducibility.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
