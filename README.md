@@ -80,7 +80,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-The app reads `DATABASE_URL` from the operating system environment. If it is not set, it defaults to `sqlite:///./work_items.db`.
+The app reads `DATABASE_URL` from the operating system environment. If it is not set, it defaults to `sqlite:///./data/work_items.db`.
 
 `.env.example` is a reference file only. It is not loaded automatically, and the project does not use `python-dotenv`.
 

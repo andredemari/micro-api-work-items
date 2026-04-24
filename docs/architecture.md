@@ -64,7 +64,7 @@ sequenceDiagram
 
 ## Persistence
 
-The MVP uses SQLite through SQLAlchemy. The application reads `DATABASE_URL` from the operating system environment and defaults to `sqlite:///./work_items.db`.
+The MVP uses SQLite through SQLAlchemy. The application reads `DATABASE_URL` from the operating system environment and defaults to `sqlite:///./data/work_items.db`.
 
 The project does not use `python-dotenv`; `.env.example` is only a reference file.
 
