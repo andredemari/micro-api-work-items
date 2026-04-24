@@ -215,7 +215,7 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `36 passed`.
+Current verification result: `40 passed`.
 
 ```bash
 make test
@@ -251,6 +251,7 @@ The test suite covers:
 - [docs/backlog.md](docs/backlog.md): release-oriented backlog.
 - [docs/demo.md](docs/demo.md): short technical demo script.
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
+- [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
 - [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
 - [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 
