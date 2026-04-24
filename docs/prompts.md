@@ -1,6 +1,6 @@
 # Prompt Documentation
 
-This document records public, generic prompts used to support academic reproducibility. The prompts are normalized rather than copied as raw transcripts.
+This document records public, generic prompts used to support academic reproducibility and traceability. The entries are sanitized summaries, not raw private chat history.
 
 ## CO-STAR Structure
 
@@ -11,31 +11,26 @@ This document records public, generic prompts used to support academic reproduci
 - Audience: intended reader or user.
 - Response format: expected output shape.
 
-## Prompt Log
+## Traceability Log
 
-| Lifecycle phase | Prompt title | Purpose | Output used |
-| --- | --- | --- | --- |
-| Planning | MVP planning prompt | Define scope, architecture, API behavior, tests, docs, and commit sequence. | Execution plan and acceptance checklist. |
-| Implementation | Backend implementation prompt | Implement the FastAPI app, SQLite persistence, CRUD routes, and local classifier. | Application source code. |
-| Testing | Test coverage prompt | Check required behavior and deterministic classification. | Pytest suite. |
-| Documentation | Documentation prompt | Produce README and supporting docs. | README and `docs/` files. |
-| Review | Final review prompt | Validate implementation against scope and constraints. | Final verification and delivery report. |
+| Prompt ID | Lifecycle Phase | Technique | Purpose | Main Output | Related Artifact | Related Commit |
+| --- | --- | --- | --- | --- | --- | --- |
+| P-001 | Planning | CO-STAR, scope control | Define the MVP scope, architecture, exclusions, tests, docs, and commit sequence. | MVP plan and acceptance checklist. | `docs/mvp_scope.md`, `docs/architecture.md` | `docs: define mvp scope and architecture plan` |
+| P-002 | Implementation | Incremental implementation, Conventional Commits | Build the FastAPI app, SQLite persistence, CRUD routes, and local classifier. | Application source code and commit sequence. | `app/`, `requirements.txt`, `Makefile` | `feat: add work item schemas services and CRUD routes` |
+| P-003 | Testing | Acceptance criteria, regression checks | Create automated coverage for health, CRUD, validation, metadata, tags, timestamps, and deterministic classification. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
+| P-004 | Documentation | CO-STAR, public-safe writing | Produce setup, run, API, architecture, decisions, and prompt documentation. | README and supporting docs. | `README.md`, `docs/` | `docs: complete README and supporting documentation` |
+| P-005 | Review | Checklist-based review | Validate scope limits, local-only classifier behavior, tests, docs, and public-safe constraints. | Final verification notes and README refinements. | `README.md`, `docs/mvp_scope.md` | `docs: improve local environment and API usage instructions` |
+| P-006 | Final Hardening | Traceability, academic submission review | Add academic context, license, diagrams, decision rationale, prompt traceability, and local data organization. | Final academic submission hardening updates. | `LICENSE`, `README.md`, `docs/`, `data/` | `docs: add academic context and license`; `docs: add architecture diagrams and technical decisions`; `docs: improve prompt traceability`; `chore: move local sqlite data into data directory` |
 
-## Generic Prompt Rules
+## Sanitized Prompt Examples
 
-- Use only the public project name `micro-api-work-items`.
-- Use generic academic wording.
-- Exclude private paths, names, credentials, tokens, internal systems, and private business context.
-- Avoid domain-specific examples beyond generic work item categories.
-- Prefer concise reproducibility prompts over raw chat history.
-
-## Planning Prompt
+### P-001 Planning
 
 Context:
 You are helping plan `micro-api-work-items`, a small academic FastAPI REST API for managing generic work items.
 
 Objective:
-Create a practical MVP plan with architecture, API behavior, test strategy, documentation plan, out-of-scope items, and Conventional Commit sequence.
+Create an MVP plan with architecture, API behavior, tests, documentation, out-of-scope items, and Conventional Commit sequence.
 
 Style:
 Keep the plan concise and implementation-ready.
@@ -47,38 +42,38 @@ Audience:
 Students and reviewers evaluating an introductory software engineering mini-project.
 
 Response format:
-Use short sections for project understanding, architecture, file tree, MVP features, tests, documentation, commits, and risks.
+Use sections for project understanding, architecture, file tree, MVP features, tests, documentation, commits, and risks.
 
-## Implementation Prompt
+### P-002 Implementation
 
 Context:
-You are helping implement `micro-api-work-items`, a small academic FastAPI REST API for managing generic work items. The project uses Python 3.11+, FastAPI, Pydantic v2, SQLAlchemy, SQLite, Uvicorn, Pytest, and HTTPX if needed. The MVP must remain local and deterministic.
+The project is a local-first FastAPI backend using Python, Pydantic, SQLAlchemy, SQLite, Uvicorn, and Pytest.
 
 Objective:
-Implement a clean backend with health check, CRUD endpoints under `/work-items`, SQLite persistence, Pydantic schemas, SQLAlchemy models, automated tests, and a side-effect-free local rule-based classifier at `POST /work-items/classify`. The classifier must return suggestions only and must not persist data.
+Implement health check, CRUD endpoints under `/work-items`, local SQLite persistence, automated tests, and a side-effect-free classifier at `POST /work-items/classify`.
 
 Style:
-Keep the code simple, readable, and appropriate for an introductory software engineering assignment. Use a small layered structure with routes, schemas, database models, services, tests, and documentation.
+Use a small layered structure with routes, schemas, database models, services, tests, and documentation.
 
 Tone:
-Practical, concise, and educational.
+Concise and instructional.
 
 Audience:
-Students and reviewers evaluating a small backend MVP with good engineering practices.
+Students and reviewers evaluating backend engineering practices.
 
 Response format:
-Provide implementation steps, files to create or update, test coverage expectations, and Conventional Commit messages. Do not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, external integrations, or `python-dotenv`.
+Provide implementation steps, files to create or update, test expectations, and Conventional Commit messages.
 
-## Testing Prompt
+### P-003 Testing
 
 Context:
-The project is a local FastAPI API with SQLite persistence and a deterministic classifier.
+The project has REST endpoints, local SQLite persistence, and deterministic classification rules.
 
 Objective:
-Create tests for health, CRUD, validation errors, missing item `404`, tags and metadata persistence, `updated_at` behavior, deterministic classification, and classifier non-persistence.
+Test health, CRUD, validation errors, missing item `404`, tags and metadata persistence, timestamp updates, deterministic classification, and classifier non-persistence.
 
 Style:
-Use focused Pytest tests with an isolated test database.
+Use focused Pytest tests with isolated database setup.
 
 Tone:
 Precise and verification-oriented.
@@ -87,18 +82,18 @@ Audience:
 Developers and academic reviewers.
 
 Response format:
-List required test scenarios and implement them as readable test functions.
+List scenarios and implement readable test functions.
 
-## Documentation Prompt
+### P-004 Documentation
 
 Context:
 The project is an academic backend MVP named `micro-api-work-items`.
 
 Objective:
-Document objective, stack, setup, run instructions, API examples, tests, limitations, next steps, architecture, decisions, MVP scope, and prompt usage.
+Document objective, stack, setup, run instructions, API examples, tests, limitations, next steps, architecture, decisions, and prompt usage.
 
 Style:
-Keep the writing concise and public-safe.
+Keep the writing concise, beginner-friendly, and public-safe.
 
 Tone:
 Clear and instructional.
@@ -109,16 +104,16 @@ Students, instructors, and reviewers.
 Response format:
 Create README content and supporting Markdown docs.
 
-## Review Prompt
+### P-005 Review
 
 Context:
-The project implementation is complete and should be checked against the accepted MVP scope.
+The implementation is complete and should be checked against the accepted MVP scope.
 
 Objective:
-Review the code, tests, docs, commit history, and runtime constraints.
+Review code, tests, docs, commit history, runtime constraints, and public-safety requirements.
 
 Style:
-Focus on verifiable acceptance criteria.
+Use checklist-based verification.
 
 Tone:
 Direct and practical.
@@ -127,4 +122,32 @@ Audience:
 Project maintainers and reviewers.
 
 Response format:
-Report pass/fail status, test results, commit log, run command, example requests, and remaining limitations.
+Report findings, test results, commit log, run command, example requests, and remaining limitations.
+
+### P-006 Final Hardening
+
+Context:
+The repository is a small academic FastAPI API prepared for final submission.
+
+Objective:
+Improve academic context, license, architecture diagrams, technical decisions, prompt traceability, local data organization, and final verification without expanding product scope.
+
+Style:
+Keep changes small, traceable, public-safe, and suitable for an introductory software engineering assignment.
+
+Tone:
+Professional and academic.
+
+Audience:
+Course reviewers and future students reading the repository.
+
+Response format:
+Use small Conventional Commits and report files changed, tests, commit log, artifact tracking checks, and remaining limitations.
+
+## Privacy And Scope Rules
+
+- Do not include raw private chat history.
+- Do not include private business context, private paths, credentials, tokens, internal systems, or domain-specific examples.
+- Keep prompts generic and reproducible.
+- Keep runtime behavior local-first and deterministic.
+- Do not introduce external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, external integrations, or `python-dotenv`.
