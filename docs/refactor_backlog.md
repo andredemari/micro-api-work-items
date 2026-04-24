@@ -200,6 +200,8 @@ Constraints:
 
 The optional local Ollama setup plan is documented in `docs/local_llm_setup.md`. That document explains how an interested user can run a local LLM outside this repository and how a future Ollama provider could be planned without making LLM usage required.
 
+The optional external provider plan is documented in `docs/external_provider_plan.md`. That document keeps external providers future-only, provider-agnostic, and dependent on separate approval before any implementation.
+
 ### Phase 6: Future Capture And Suggestion Workflow
 
 Plan future human-in-the-loop workflows without implementing them now.
@@ -270,7 +272,7 @@ Near-term planning should stay at Level 1 or Level 2.
 | REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Done |
 | REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Done |
 | REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | `docs/local_llm_setup.md` | Not required | Optional local LLM setup and future Ollama provider plan documented; no provider code implemented | Done |
-| REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | docs first, later future provider module | Mocked tests only | No credentials required by default | Future |
+| REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | `docs/external_provider_plan.md` | Not required | Provider-agnostic external provider plan documented; no provider code implemented | Done |
 | REF-009 | 6 | Plan capture concept | Support future raw-input workflow | docs first | Not required | Capture design documented only | Future |
 | REF-010 | 6 | Plan pending suggestions | Support human review before applying changes | docs first | Not required | Suggestion lifecycle documented only | Future |
 | REF-011 | 7 | Plan human review records | Keep human approval explicit | docs first | Not required | Review model described, not implemented | Future |
@@ -387,12 +389,12 @@ Each implementation commit should be small and behavior-preserving unless a futu
 
 ## Recommended Next Planning Step
 
-The completed refactor tasks now cover REF-001 through REF-007. The next roadmap item is REF-008:
+The completed refactor tasks now cover REF-001 through REF-008. The next roadmap item is REF-009:
 
 ```text
-REF-008: Plan optional external provider
+REF-009: Plan capture concept
 ```
 
-REF-008 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later provider work must keep the local deterministic provider available by default and must avoid adding credentials, environment variables, or new dependencies without a separate approval.
+REF-009 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later capture workflow must preserve the current public API until a separate API change is approved.
 
-This REF-007 documentation task does not implement Ollama, external providers, runtime provider selection, credentials, or environment variables.
+This REF-008 documentation task does not implement external providers, runtime provider selection, credentials, environment variables, dependencies, or provider registry behavior.
