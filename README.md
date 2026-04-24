@@ -137,8 +137,9 @@ python -m uvicorn app.main:app --reload
 ```text
 .
 |-- app/
-|   |-- api/routes/        # FastAPI route handlers
+|   |-- controllers/       # FastAPI route handlers
 |   |-- db/                # SQLAlchemy model and session setup
+|   |-- repositories/      # Persistence access functions
 |   |-- schemas/           # Pydantic request and response schemas
 |   `-- services/          # Work item CRUD and classifier logic
 |-- data/                  # Local SQLite directory; database files are ignored
@@ -152,10 +153,10 @@ python -m uvicorn app.main:app --reload
 
 Course architecture terminology maps to this FastAPI project as follows:
 
-- Controller = `app/api/routes`
+- Controller = `app/controllers`
 - Model = `app/schemas` for API contracts and `app/db/models.py` for persistence
 - Service = `app/services`
-- Repository = deferred/omitted for this small MVP because SQLAlchemy access is simple
+- Repository = `app/repositories`
 - Database/session = `app/db/database.py`
 
 ## Architecture Overview

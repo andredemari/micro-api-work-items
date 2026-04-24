@@ -3,8 +3,8 @@ from collections.abc import AsyncIterator
 
 from fastapi import FastAPI
 
-from app.api.routes.health import router as health_router
-from app.api.routes.work_items import router as work_items_router
+from app.controllers.health_controller import router as health_router
+from app.controllers.work_item_controller import router as work_items_router
 from app.db.database import init_db
 
 
