@@ -263,7 +263,7 @@ Near-term planning should stay at Level 1 or Level 2.
 | REF-001 | 1 | Move route modules to controllers | Align with course Controller terminology | `app/controllers/*`, `app/main.py`, imports | Full suite | Public routes unchanged; tests pass | Planned |
 | REF-002 | 1 | Move SQLAlchemy model to models layer | Separate database models from database setup | `app/models/work_item_model.py`, imports | Full suite | Table behavior unchanged; tests pass | Planned |
 | REF-003 | 2 | Add work item repository | Isolate SQLAlchemy persistence operations | `app/repositories/work_item_repository.py`, service imports | Repository/service/API tests | Service uses repository; API unchanged | Done |
-| REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Planned |
+| REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
 | REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Planned |
 | REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Future |
 | REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | docs first, later future provider module | Mocked tests only | Missing local provider does not break app | Future |
