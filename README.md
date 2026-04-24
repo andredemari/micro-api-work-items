@@ -21,7 +21,38 @@ The objective is to demonstrate a simple backend MVP with clear scope, local per
 
 ## Setup
 
-### Standard Python/venv
+Choose one setup path. Windows users with Anaconda should usually start with Anaconda Prompt.
+
+Python available on PATH means the terminal can run Python by typing python. If that does not work, use Anaconda Prompt or the full Python executable path.
+
+### Recommended For Windows Users With Anaconda: Anaconda Prompt
+
+```bash
+conda create -n micro-api-work-items python=3.11
+conda activate micro-api-work-items
+python -m pip install -r requirements.txt
+python -m pytest -q
+python -m uvicorn app.main:app --reload
+```
+
+### Alternative: Windows PowerShell With Full Anaconda Python Path
+
+If `python` is not available directly in PowerShell, use the full Anaconda Python executable path:
+
+```powershell
+$PY="C:\Users\<your-user>\anaconda3\python.exe"
+& $PY -m pip install -r requirements.txt
+& $PY -m pytest -q
+& $PY -m uvicorn app.main:app --reload
+```
+
+If you use a dedicated Conda environment, the full path may be:
+
+```powershell
+$PY="C:\Users\<your-user>\anaconda3\envs\micro-api-work-items\python.exe"
+```
+
+### Alternative: Standard Python Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -29,7 +60,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-On Windows PowerShell with `python` available on `PATH`:
+On Windows PowerShell with `python` available:
 
 ```powershell
 python -m venv .venv
@@ -37,28 +68,12 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-### Linux/WSL
+### Alternative: Linux/WSL
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-```
-
-### Anaconda Prompt
-
-```bash
-conda create -n micro-api-work-items python=3.11
-conda activate micro-api-work-items
-python -m pip install -r requirements.txt
-```
-
-### Windows PowerShell With Full Anaconda Path
-
-If Python is not available directly as `python`, use the full Anaconda Python executable path:
-
-```powershell
-& 'C:\Users\<your-user>\anaconda3\python.exe' -m pip install -r requirements.txt
 ```
 
 The app reads `DATABASE_URL` from the operating system environment. If it is not set, it defaults to `sqlite:///./work_items.db`.
@@ -74,7 +89,8 @@ python -m uvicorn app.main:app --reload
 With a full Anaconda Python path in Windows PowerShell:
 
 ```powershell
-& 'C:\Users\<your-user>\anaconda3\python.exe' -m uvicorn app.main:app --reload
+$PY="C:\Users\<your-user>\anaconda3\python.exe"
+& $PY -m uvicorn app.main:app --reload
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
@@ -215,7 +231,8 @@ python -m pytest -q
 With a full Anaconda Python path in Windows PowerShell:
 
 ```powershell
-& 'C:\Users\<your-user>\anaconda3\python.exe' -m pytest -q
+$PY="C:\Users\<your-user>\anaconda3\python.exe"
+& $PY -m pytest -q
 ```
 
 The test suite covers health, CRUD behavior, validation errors, missing item `404` responses, tags and metadata persistence, `updated_at` behavior, and deterministic classification.
