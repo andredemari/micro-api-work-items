@@ -15,8 +15,9 @@ The current application is organized as a small FastAPI backend:
 - `app/models/work_item_model.py` contains the SQLAlchemy persistence model.
 - `app/db/database.py` contains database engine, session, and schema initialization.
 - `app/services/work_items.py` contains CRUD service logic.
-- `app/services/priority_advisor.py` contains deterministic local PriorityAdvisor rules.
-- `tests/` contains API, service, repository, and PriorityAdvisor tests.
+- `app/services/priority_advisor.py` orchestrates PriorityAdvisor suggestions.
+- `app/providers/priority/local_provider.py` contains deterministic local PriorityAdvisor rules.
+- `tests/` contains API, service, repository, provider, and PriorityAdvisor tests.
 
 The current public API must remain unchanged:
 
@@ -265,7 +266,7 @@ Near-term planning should stay at Level 1 or Level 2.
 | REF-003 | 2 | Add work item repository | Isolate SQLAlchemy persistence operations | `app/repositories/work_item_repository.py`, service imports | Repository/service/API tests | Service uses repository; API unchanged | Done |
 | REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
 | REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Done |
-| REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Future |
+| REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Done |
 | REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | docs first, later future provider module | Mocked tests only | Missing local provider does not break app | Future |
 | REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | docs first, later future provider module | Mocked tests only | No credentials required by default | Future |
 | REF-009 | 6 | Plan capture concept | Support future raw-input workflow | docs first | Not required | Capture design documented only | Future |
@@ -383,12 +384,12 @@ Each implementation commit should be small and behavior-preserving unless a futu
 
 ## Recommended Next Planning Step
 
-The completed refactor tasks now cover REF-001 through REF-005. The next roadmap item is REF-006:
+The completed refactor tasks now cover REF-001 through REF-006. The next roadmap item is REF-007:
 
 ```text
-REF-006: Add local provider interface
+REF-007: Plan optional Ollama provider
 ```
 
-REF-006 should be planned separately before any implementation. That plan should confirm whether a provider interface is still useful, how to keep local deterministic behavior as the default, and how to avoid adding external providers, credentials, environment variables, or new dependencies.
+REF-007 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later provider work must keep the local deterministic provider available by default and must avoid adding credentials, environment variables, or new dependencies without a separate approval.
 
-This documentation consistency patch does not implement REF-006.
+This REF-006 implementation does not implement Ollama, external providers, runtime provider selection, credentials, or environment variables.

@@ -140,6 +140,7 @@ python -m uvicorn app.main:app --reload
 |   |-- controllers/       # FastAPI route handlers
 |   |-- db/                # Database engine and session setup
 |   |-- models/            # SQLAlchemy persistence models
+|   |-- providers/         # Local deterministic PriorityAdvisor provider
 |   |-- repositories/      # Persistence access functions
 |   |-- schemas/           # Pydantic request and response schemas
 |   `-- services/          # Work item CRUD and PriorityAdvisor logic
@@ -170,7 +171,8 @@ flowchart TD
     Services --> Repository["Work item repository"]
     Repository --> SQLite["SQLite via SQLAlchemy"]
     Controllers --> Advisor["Local PriorityAdvisor service"]
-    Advisor --> Suggestions["Suggestions only"]
+    Advisor --> Provider["Local deterministic provider"]
+    Provider --> Suggestions["Suggestions only"]
 ```
 
 The classification path is side-effect free: `POST /work-items/classify` uses the local PriorityAdvisor service to return suggestions and does not read or write persisted work items. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
@@ -236,6 +238,7 @@ The test suite covers:
 - service-level CRUD behavior;
 - repository-level persistence behavior;
 - PriorityAdvisor service behavior;
+- local provider behavior;
 - deterministic PriorityAdvisor output;
 - classification non-persistence;
 - isolated SQLite test database.
