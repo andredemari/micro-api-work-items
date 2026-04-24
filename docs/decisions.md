@@ -8,6 +8,16 @@ SQLite keeps the MVP simple to run locally while still demonstrating relational 
 
 FastAPI provides concise routing and OpenAPI generation. Pydantic v2 provides request and response validation with enum-backed fields.
 
+## Why FastAPI, Pydantic and SQLAlchemy
+
+FastAPI was chosen because the MVP is an API-first backend and FastAPI provides concise route declaration and automatic OpenAPI documentation.
+
+Pydantic v2 is used for request and response validation, making the API contract explicit and easier to test.
+
+SQLAlchemy is used for persistence with SQLite, keeping the project local and simple while demonstrating a relational data model.
+
+Flask would also be a valid option for a small API, but FastAPI was chosen because it reduces boilerplate for validation and documentation, which is useful for an academic micro-API MVP.
+
 ## SQLAlchemy Model Metadata Field
 
 SQLAlchemy reserves the `metadata` attribute on declarative models. The database column is still named `metadata`, but the Python model uses `metadata_json` internally and the API exposes `metadata`.

@@ -10,6 +10,17 @@ micro-api-work-items is a small FastAPI backend organized around a simple layere
 - SQLAlchemy models define local SQLite persistence.
 - Tests validate API behavior and deterministic rules.
 
+```mermaid
+flowchart TD
+    Client["HTTP client"] --> Routes["FastAPI routes"]
+    Routes --> Schemas["Pydantic schemas"]
+    Routes --> Services["Application services"]
+    Services --> Models["SQLAlchemy models"]
+    Models --> SQLite["SQLite database"]
+    Tests["Pytest suite"] --> Routes
+    Tests --> Services
+```
+
 ## Request Flow
 
 1. A client calls a FastAPI endpoint.
@@ -18,7 +29,38 @@ micro-api-work-items is a small FastAPI backend organized around a simple layere
 4. The service reads or writes SQLite data through SQLAlchemy models.
 5. The route returns a Pydantic response model.
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as FastAPI CRUD route
+    participant Schema as Pydantic schema
+    participant Service as Work item service
+    participant DB as SQLite via SQLAlchemy
+
+    Client->>API: POST/GET/PATCH/DELETE /work-items
+    API->>Schema: Validate request or response
+    API->>Service: Call CRUD operation
+    Service->>DB: Read or write work item
+    DB-->>Service: Return model data
+    Service-->>API: Return result
+    API-->>Client: JSON response or status code
+```
+
 The classifier endpoint follows a separate flow: it validates input, applies local deterministic rules, and returns suggestions without writing to the database.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as Classifier route
+    participant Schema as Pydantic schema
+    participant Rules as Local rule engine
+
+    Client->>API: POST /work-items/classify
+    API->>Schema: Validate input
+    API->>Rules: Apply deterministic keyword rules
+    Rules-->>API: Return suggestions and reasons
+    API-->>Client: JSON classification response
+```
 
 ## Persistence
 
