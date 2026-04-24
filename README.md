@@ -1,6 +1,6 @@
 # micro-api-work-items
 
-micro-api-work-items is a small academic REST API for managing generic work items with FastAPI, SQLite, automated tests, and local deterministic classification rules.
+micro-api-work-items is a small academic REST API for managing generic work items with FastAPI, SQLite, automated tests, and local deterministic PriorityAdvisor rules.
 
 A work item is a generic task-like record that can represent a task, bug, improvement, research item, operation item, or incident.
 
@@ -40,7 +40,7 @@ The course reference problem is a "Micro-API de Tarefas". This project implement
 | Excluir tarefa | Delete a work item | `DELETE /work-items/{id}` |
 | Sugerir prioridade/classificação | Suggest priority and classification | `POST /work-items/classify` |
 
-The course PriorityAdvisor concept is represented by the local deterministic classifier. Runtime integration with external AI providers is intentionally out of scope for this MVP.
+The course PriorityAdvisor concept is represented by a local deterministic PriorityAdvisor service. Runtime integration with external AI providers is intentionally out of scope for this MVP.
 
 ## Stack
 
@@ -142,10 +142,10 @@ python -m uvicorn app.main:app --reload
 |   |-- models/            # SQLAlchemy persistence models
 |   |-- repositories/      # Persistence access functions
 |   |-- schemas/           # Pydantic request and response schemas
-|   `-- services/          # Work item CRUD and classifier logic
+|   `-- services/          # Work item CRUD and PriorityAdvisor logic
 |-- data/                  # Local SQLite directory; database files are ignored
 |-- docs/                  # Architecture, scope, decisions, prompts, demo, release notes
-|-- tests/                 # API, service, and classifier tests
+|-- tests/                 # API, service, repository, and PriorityAdvisor tests
 |-- .env.example           # Reference-only environment variable example
 |-- Makefile               # install, run, and test commands
 |-- README.md
@@ -169,11 +169,11 @@ flowchart TD
     Controllers --> Services["Work item service"]
     Services --> Repository["Work item repository"]
     Repository --> SQLite["SQLite via SQLAlchemy"]
-    Controllers --> Classifier["Local classifier service"]
-    Classifier --> Suggestions["Suggestions only"]
+    Controllers --> Advisor["Local PriorityAdvisor service"]
+    Advisor --> Suggestions["Suggestions only"]
 ```
 
-The classifier path is side-effect free: `POST /work-items/classify` returns suggestions and does not read or write persisted work items. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
+The classification path is side-effect free: `POST /work-items/classify` uses the local PriorityAdvisor service to return suggestions and does not read or write persisted work items. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
 
 ## Endpoints
 
@@ -235,9 +235,9 @@ The test suite covers:
 - `updated_at` behavior;
 - service-level CRUD behavior;
 - repository-level persistence behavior;
-- classifier service behavior;
-- deterministic classifier output;
-- classifier non-persistence;
+- PriorityAdvisor service behavior;
+- deterministic PriorityAdvisor output;
+- classification non-persistence;
 - isolated SQLite test database.
 
 ## Documentation Map
@@ -304,7 +304,7 @@ Future versions may expose the API as a reusable backend service for external cl
 
 Generative AI supported scope planning, architecture discussion, implementation scaffolding, test design, documentation drafting, review, and refinement.
 
-Human review was decisive for final scope decisions, preserving a local deterministic classifier instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
+Human review was decisive for final scope decisions, preserving a local deterministic PriorityAdvisor instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
 
 Risk mitigation included avoiding credentials, avoiding paid runtime AI providers, avoiding external data sharing, keeping runtime behavior local and deterministic, and requiring tests and review before acceptance.
 

@@ -32,17 +32,17 @@ This decision can be revisited if persistence logic grows, if multiple storage b
 
 The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionally not included.
 
-## Separate Classifier Flow
+## Separate PriorityAdvisor Flow
 
-`POST /work-items/classify` is side-effect free. It receives input data, applies local rules, and returns suggestions without reading or writing persisted work items.
+`POST /work-items/classify` is side-effect free. It receives input data, delegates to the local PriorityAdvisor, applies deterministic rules, and returns suggestions without reading or writing persisted work items.
 
-## Local Deterministic Classification
+## Local Deterministic PriorityAdvisor
 
 Classification uses keyword rules only. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
 
 ## External AI Runtime Integration Deferred
 
-Runtime integration with external AI providers is out of scope for this MVP. The classifier is intentionally local, deterministic, and usable without credentials or paid API calls.
+Runtime integration with external AI providers is out of scope for this MVP. The PriorityAdvisor is intentionally local, deterministic, and usable without credentials or paid API calls.
 
 If external AI integration is explored in a future version, it should be optional and should include credential management, timeout handling, error handling, and a local deterministic fallback. This project does not introduce provider variables or runtime AI behavior.
 

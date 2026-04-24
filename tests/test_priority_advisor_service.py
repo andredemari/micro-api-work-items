@@ -3,11 +3,11 @@ from app.schemas.work_items import (
     WorkItemPriority,
     WorkItemType,
 )
-from app.services.classifier import classify_work_item
+from app.services.priority_advisor import advise_work_item
 
 
-def test_classifier_defaults_to_task_and_medium_without_keywords() -> None:
-    result = classify_work_item(
+def test_priority_advisor_defaults_to_task_and_medium_without_keywords() -> None:
+    result = advise_work_item(
         WorkItemClassificationInput(
             title="Plan weekly notes",
             description="Organize a short update.",
@@ -21,8 +21,8 @@ def test_classifier_defaults_to_task_and_medium_without_keywords() -> None:
     assert result.reasons == ["default classification applied"]
 
 
-def test_classifier_detects_bug_and_high_priority() -> None:
-    result = classify_work_item(
+def test_priority_advisor_detects_bug_and_high_priority() -> None:
+    result = advise_work_item(
         WorkItemClassificationInput(
             title="Fix crash in workflow",
             description="High priority failure during execution.",
@@ -39,8 +39,8 @@ def test_classifier_detects_bug_and_high_priority() -> None:
     ]
 
 
-def test_classifier_detects_critical_incident() -> None:
-    result = classify_work_item(
+def test_priority_advisor_detects_critical_incident() -> None:
+    result = advise_work_item(
         WorkItemClassificationInput(
             title="Critical incident",
             description="Service unavailable for users.",
@@ -57,8 +57,8 @@ def test_classifier_detects_critical_incident() -> None:
     ]
 
 
-def test_classifier_normalizes_and_deduplicates_tags() -> None:
-    result = classify_work_item(
+def test_priority_advisor_normalizes_and_deduplicates_tags() -> None:
+    result = advise_work_item(
         WorkItemClassificationInput(
             title="Investigate low priority cleanup",
             description="",
