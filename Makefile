@@ -1,10 +1,10 @@
 .PHONY: install run test
 
 install:
-	pip install -r requirements.txt
+	python -m pip install -r requirements.txt
 
 run:
-	uvicorn app.main:app --reload
+	python -m uvicorn app.main:app --reload
 
 test:
-	pytest
+	python -m pytest -q
