@@ -15,134 +15,68 @@ This document records public, generic prompts used to support academic reproduci
 
 | Prompt ID | Lifecycle Phase | Technique | Purpose | Main Output | Related Artifact | Related Commit |
 | --- | --- | --- | --- | --- | --- | --- |
-| P-001 | Planning | CO-STAR, scope control | Define the MVP scope, architecture, exclusions, tests, docs, and commit sequence. | MVP plan and acceptance checklist. | `docs/mvp_scope.md`, `docs/architecture.md` | `docs: define mvp scope and architecture plan` |
-| P-002 | Implementation | Incremental implementation, Conventional Commits | Build the FastAPI app, SQLite persistence, CRUD routes, and local classifier. | Application source code and commit sequence. | `app/`, `requirements.txt`, `Makefile` | `feat: add work item schemas services and CRUD routes` |
-| P-003 | Testing | Acceptance criteria, regression checks | Create automated coverage for health, CRUD, validation, metadata, tags, timestamps, and deterministic classification. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
-| P-004 | Documentation | CO-STAR, public-safe writing | Produce setup, run, API, architecture, decisions, and prompt documentation. | README and supporting docs. | `README.md`, `docs/` | `docs: complete README and supporting documentation` |
-| P-005 | Review | Checklist-based review | Validate scope limits, local-only classifier behavior, tests, docs, and public-safe constraints. | Final verification notes and README refinements. | `README.md`, `docs/mvp_scope.md` | `docs: improve local environment and API usage instructions` |
-| P-006 | Final Hardening | Traceability, academic submission review | Add academic context, license, diagrams, decision rationale, prompt traceability, and local data organization. | Final academic submission hardening updates. | `LICENSE`, `README.md`, `docs/`, `data/` | `docs: add academic context and license`; `docs: add architecture diagrams and technical decisions`; `docs: improve prompt traceability`; `chore: move local sqlite data into data directory` |
+| P-001 | Scope/planning | CO-STAR, scope control | Define the MVP scope, route vocabulary, exclusions, architecture, tests, docs, and commit plan. | MVP plan and acceptance checklist. | `docs/mvp_scope.md`, `docs/architecture.md` | `docs: define mvp scope and architecture plan` |
+| P-002 | `.gitignore`/setup | Reproducibility checklist | Create local setup files, dependency list, ignored artifacts, and basic Makefile commands. | Project configuration. | `.gitignore`, `requirements.txt`, `Makefile` | `chore: initialize project configuration` |
+| P-003 | README | Public-safe documentation | Explain objective, setup, run, test, API usage, limitations, academic context, and license. | Reproducible project overview. | `README.md`, `LICENSE` | `docs: complete README and supporting documentation`; `docs: add academic context and license` |
+| P-004 | Healthcheck | Incremental backend implementation | Add a minimal FastAPI application and service health endpoint. | Health route and app entrypoint. | `app/main.py`, `app/api/routes/health.py` | `feat: add FastAPI app and health endpoint` |
+| P-005 | Models/schemas | Contract-first design | Define work item fields, enum values, request schemas, response schemas, and classifier schemas. | Pydantic API contract and SQLAlchemy model. | `app/schemas/work_items.py`, `app/db/models.py` | `feat: configure SQLite persistence and work item model`; `feat: add work item schemas services and CRUD routes` |
+| P-006 | Service | Layered architecture | Implement CRUD behavior behind route functions without changing HTTP contracts. | Work item service functions. | `app/services/work_items.py` | `feat: add work item schemas services and CRUD routes` |
+| P-007 | Persistence | Local-first data design | Configure SQLite persistence, session handling, test isolation, and ignored local database files. | Database configuration and local data organization. | `app/db/database.py`, `data/.gitkeep`, `.env.example` | `feat: configure SQLite persistence and work item model`; `chore: move local sqlite data into data directory` |
+| P-008 | Classifier/PriorityAdvisor | Deterministic local rules | Represent the course PriorityAdvisor idea with local rule-based classification and no persistence side effects. | Classifier service and classifier route. | `app/services/classifier.py`, `app/api/routes/work_items.py` | `feat: add local rule-based classifier`; `docs: map course task API scope to work items` |
+| P-009 | API routes | REST route implementation | Expose CRUD and classification behavior under `/work-items` using current MVP routes. | API route module. | `app/api/routes/work_items.py` | `feat: add work item schemas services and CRUD routes` |
+| P-010 | Tests | Acceptance criteria, regression checks | Cover health, CRUD, validation errors, missing items, timestamps, metadata, tags, and classifier non-persistence. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
+| P-011 | Review | Checklist-based review | Validate scope limits, local-only runtime behavior, public-safe docs, tracked artifacts, and final course guidance. | Review notes and final hardening tasks. | `docs/mvp_scope.md`, `docs/release_checklist.md` | `docs: add backlog demo and release checklist` |
+| P-012 | Final documentation/release | Release readiness | Add backlog, demo script, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/demo.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
 
-## Sanitized Prompt Examples
+## Compact Sanitized Prompt Examples
 
-### P-001 Planning
+### P-001 Scope/Planning
 
-Context:
-You are helping plan `micro-api-work-items`, a small academic FastAPI REST API for managing generic work items.
+Plan a small academic FastAPI MVP for generic work items. Include scope, out-of-scope items, architecture, API routes, persistence, tests, documentation, and Conventional Commit sequence.
 
-Objective:
-Create an MVP plan with architecture, API behavior, tests, documentation, out-of-scope items, and Conventional Commit sequence.
+### P-002 `.gitignore`/Setup
 
-Style:
-Keep the plan concise and implementation-ready.
+Create basic local project configuration for a Python FastAPI MVP. Include dependency list, ignored Python/cache/database artifacts, and simple install/run/test commands.
 
-Tone:
-Practical and educational.
+### P-003 README
 
-Audience:
-Students and reviewers evaluating an introductory software engineering mini-project.
+Write public-safe README content for an academic micro-API, including objective, setup, run, tests, API examples, limitations, AI-assisted development notes, and license.
 
-Response format:
-Use sections for project understanding, architecture, file tree, MVP features, tests, documentation, commits, and risks.
+### P-004 Healthcheck
 
-### P-002 Implementation
+Add a minimal FastAPI application with a health endpoint that can be tested automatically and used as the first runtime verification.
 
-Context:
-The project is a local-first FastAPI backend using Python, Pydantic, SQLAlchemy, SQLite, Uvicorn, and Pytest.
+### P-005 Models/Schemas
 
-Objective:
-Implement health check, CRUD endpoints under `/work-items`, local SQLite persistence, automated tests, and a side-effect-free classifier at `POST /work-items/classify`.
+Define Pydantic v2 schemas and SQLAlchemy models for a generic work item with enum-backed fields, tags, optional metadata, and timestamps.
 
-Style:
-Use a small layered structure with routes, schemas, database models, services, tests, and documentation.
+### P-006 Service
 
-Tone:
-Concise and instructional.
+Implement work item CRUD service functions with clear type hints while keeping HTTP route handling separate from persistence operations.
 
-Audience:
-Students and reviewers evaluating backend engineering practices.
+### P-007 Persistence
 
-Response format:
-Provide implementation steps, files to create or update, test expectations, and Conventional Commit messages.
+Configure local SQLite persistence for the MVP, keep runtime database files ignored, and isolate tests from runtime data.
 
-### P-003 Testing
+### P-008 Classifier/PriorityAdvisor
 
-Context:
-The project has REST endpoints, local SQLite persistence, and deterministic classification rules.
+Represent the course PriorityAdvisor concept with a local deterministic classifier that returns suggestions without persisting data or calling external AI providers.
 
-Objective:
-Test health, CRUD, validation errors, missing item `404`, tags and metadata persistence, timestamp updates, deterministic classification, and classifier non-persistence.
+### P-009 API Routes
 
-Style:
-Use focused Pytest tests with isolated database setup.
+Expose work item CRUD routes and the classifier route under `/work-items`, using `PATCH` for partial updates and preserving the MVP route contract.
 
-Tone:
-Precise and verification-oriented.
+### P-010 Tests
 
-Audience:
-Developers and academic reviewers.
+Create automated tests for health, CRUD, validation errors, missing items, tags, metadata, timestamps, deterministic classification, and classifier non-persistence.
 
-Response format:
-List scenarios and implement readable test functions.
+### P-011 Review
 
-### P-004 Documentation
+Review the repository against MVP scope, public-safety constraints, test coverage, documentation completeness, tracked artifacts, and course submission expectations.
 
-Context:
-The project is an academic backend MVP named `micro-api-work-items`.
+### P-012 Final Documentation/Release
 
-Objective:
-Document objective, stack, setup, run instructions, API examples, tests, limitations, next steps, architecture, decisions, and prompt usage.
-
-Style:
-Keep the writing concise, beginner-friendly, and public-safe.
-
-Tone:
-Clear and instructional.
-
-Audience:
-Students, instructors, and reviewers.
-
-Response format:
-Create README content and supporting Markdown docs.
-
-### P-005 Review
-
-Context:
-The implementation is complete and should be checked against the accepted MVP scope.
-
-Objective:
-Review code, tests, docs, commit history, runtime constraints, and public-safety requirements.
-
-Style:
-Use checklist-based verification.
-
-Tone:
-Direct and practical.
-
-Audience:
-Project maintainers and reviewers.
-
-Response format:
-Report findings, test results, commit log, run command, example requests, and remaining limitations.
-
-### P-006 Final Hardening
-
-Context:
-The repository is a small academic FastAPI API prepared for final submission.
-
-Objective:
-Improve academic context, license, architecture diagrams, technical decisions, prompt traceability, local data organization, and final verification without expanding product scope.
-
-Style:
-Keep changes small, traceable, public-safe, and suitable for an introductory software engineering assignment.
-
-Tone:
-Professional and academic.
-
-Audience:
-Course reviewers and future students reading the repository.
-
-Response format:
-Use small Conventional Commits and report files changed, tests, commit log, artifact tracking checks, and remaining limitations.
+Prepare final academic submission documentation with backlog, demo script, release checklist, prompt traceability, reproducibility notes, and verification commands.
 
 ## Privacy And Scope Rules
 
