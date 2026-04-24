@@ -198,6 +198,8 @@ Constraints:
 - No model files may be stored in the repository.
 - Any future external provider must be approved in a separate implementation plan.
 
+The optional local Ollama setup plan is documented in `docs/local_llm_setup.md`. That document explains how an interested user can run a local LLM outside this repository and how a future Ollama provider could be planned without making LLM usage required.
+
 ### Phase 6: Future Capture And Suggestion Workflow
 
 Plan future human-in-the-loop workflows without implementing them now.
@@ -267,7 +269,7 @@ Near-term planning should stay at Level 1 or Level 2.
 | REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
 | REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Done |
 | REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Done |
-| REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | docs first, later future provider module | Mocked tests only | Missing local provider does not break app | Future |
+| REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | `docs/local_llm_setup.md` | Not required | Optional local LLM setup and future Ollama provider plan documented; no provider code implemented | Done |
 | REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | docs first, later future provider module | Mocked tests only | No credentials required by default | Future |
 | REF-009 | 6 | Plan capture concept | Support future raw-input workflow | docs first | Not required | Capture design documented only | Future |
 | REF-010 | 6 | Plan pending suggestions | Support human review before applying changes | docs first | Not required | Suggestion lifecycle documented only | Future |
@@ -378,18 +380,19 @@ refactor: move persistence model into models layer
 refactor: rename classifier to priority advisor
 refactor: add local priority provider interface
 docs: update architecture after refactor phases
+docs: add local llm setup guidance
 ```
 
 Each implementation commit should be small and behavior-preserving unless a future change is explicitly approved.
 
 ## Recommended Next Planning Step
 
-The completed refactor tasks now cover REF-001 through REF-006. The next roadmap item is REF-007:
+The completed refactor tasks now cover REF-001 through REF-007. The next roadmap item is REF-008:
 
 ```text
-REF-007: Plan optional Ollama provider
+REF-008: Plan optional external provider
 ```
 
-REF-007 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later provider work must keep the local deterministic provider available by default and must avoid adding credentials, environment variables, or new dependencies without a separate approval.
+REF-008 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later provider work must keep the local deterministic provider available by default and must avoid adding credentials, environment variables, or new dependencies without a separate approval.
 
-This REF-006 implementation does not implement Ollama, external providers, runtime provider selection, credentials, or environment variables.
+This REF-007 documentation task does not implement Ollama, external providers, runtime provider selection, credentials, or environment variables.

@@ -27,6 +27,7 @@ This document records public, generic prompts used to support academic reproduci
 | P-010 | Tests | Acceptance criteria, regression checks | Cover health, CRUD, validation errors, missing items, timestamps, metadata, tags, and classifier non-persistence. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
 | P-011 | Review | Checklist-based review | Validate scope limits, local-only runtime behavior, public-safe docs, tracked artifacts, and final course guidance. | Review notes and final hardening tasks. | `docs/mvp_scope.md`, `docs/release_checklist.md` | `docs: add backlog demo and release checklist` |
 | P-012 | Final documentation/release | Release readiness | Add backlog, demo script, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/demo.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
+| P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
 
 ## Compact Sanitized Prompt Examples
 
@@ -77,6 +78,10 @@ Review the repository against MVP scope, public-safety constraints, test coverag
 ### P-012 Final Documentation/Release
 
 Prepare final academic submission documentation with backlog, demo script, release checklist, prompt traceability, reproducibility notes, and verification commands.
+
+### P-013 Local LLM Planning
+
+Document optional local LLM setup with Ollama for future experimentation, keeping current runtime behavior unchanged and avoiding provider code, credentials, dependencies, or environment variables.
 
 ## Privacy And Scope Rules
 
