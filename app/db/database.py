@@ -41,7 +41,7 @@ class Base(DeclarativeBase):
 
 def init_db() -> None:
     """Create database tables for the local SQLite-backed MVP."""
-    from app.db import models  # noqa: F401
+    from app.models import work_item_model  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 

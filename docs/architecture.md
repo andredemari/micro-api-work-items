@@ -29,7 +29,7 @@ flowchart TD
 Some course examples describe the architecture as Controller -> Service -> Repository -> Database. This project keeps an idiomatic FastAPI structure while preserving the same responsibilities:
 
 - Controller in the course = `app/controllers` in this project.
-- Model in the course = `app/schemas` for API contracts and `app/db/models.py` for SQLAlchemy persistence models.
+- Model in the course = `app/schemas` for API contracts and `app/models/work_item_model.py` for SQLAlchemy persistence models.
 - Service in the course = `app/services` in this project.
 - Repository in the course = `app/repositories` in this project.
 - Database/session setup = `app/db/database.py`.
