@@ -40,7 +40,9 @@ The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionall
 
 ## Local Deterministic PriorityAdvisor
 
-Classification uses keyword rules only. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
+Classification uses keyword rules only. The PriorityAdvisor service delegates to the local deterministic provider in `app/providers/priority/local_provider.py`.
+
+The local provider is an internal implementation detail and does not change public API behavior. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
 
 ## External AI Runtime Integration Deferred
 

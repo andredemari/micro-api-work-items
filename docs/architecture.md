@@ -7,6 +7,7 @@ micro-api-work-items is a small FastAPI backend organized around a simple layere
 - Controllers receive HTTP requests and return response schemas.
 - Pydantic schemas validate request and response data.
 - Services hold application logic for persisted work items and local PriorityAdvisor suggestions.
+- Providers contain the local deterministic PriorityAdvisor rule implementation.
 - Repositories isolate persistence operations.
 - SQLAlchemy models define local SQLite persistence.
 - Tests validate API behavior and deterministic rules.
@@ -19,9 +20,11 @@ flowchart TD
     Services --> Repositories["Repositories"]
     Repositories --> Models["SQLAlchemy models"]
     Models --> SQLite["SQLite database"]
+    Services --> Provider["Local priority provider"]
     Tests["Pytest suite"] --> Controllers
     Tests --> Services
     Tests --> Repositories
+    Tests --> Provider
 ```
 
 ## Course Terminology Mapping
@@ -71,11 +74,14 @@ sequenceDiagram
     participant API as Classification route
     participant Schema as Pydantic schema
     participant Advisor as Local PriorityAdvisor
+    participant Provider as Local provider
 
     Client->>API: POST /work-items/classify
     API->>Schema: Validate input
-    API->>Advisor: Apply deterministic keyword rules
-    Advisor-->>API: Return suggestions and reasons
+    API->>Advisor: Request suggestions
+    Advisor->>Provider: Apply deterministic keyword rules
+    Provider-->>Advisor: Return suggestions and reasons
+    Advisor-->>API: Return classification response
     API-->>Client: JSON classification response
 ```
 
