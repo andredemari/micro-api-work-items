@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.db.models import WorkItem
+from app.models.work_item_model import WorkItem
 from app.repositories import work_item_repository
 from app.schemas.work_items import WorkItemCreate, WorkItemUpdate
 

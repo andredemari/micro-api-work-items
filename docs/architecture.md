@@ -4,54 +4,61 @@ micro-api-work-items is a small FastAPI backend organized around a simple layere
 
 ## Layers
 
-- API routes receive HTTP requests and return response schemas.
+- Controllers receive HTTP requests and return response schemas.
 - Pydantic schemas validate request and response data.
 - Services hold application logic for persisted work items and local classification.
+- Repositories isolate persistence operations.
 - SQLAlchemy models define local SQLite persistence.
 - Tests validate API behavior and deterministic rules.
 
 ```mermaid
 flowchart TD
-    Client["HTTP client"] --> Routes["FastAPI routes"]
-    Routes --> Schemas["Pydantic schemas"]
-    Routes --> Services["Application services"]
-    Services --> Models["SQLAlchemy models"]
+    Client["HTTP client"] --> Controllers["FastAPI controllers"]
+    Controllers --> Schemas["Pydantic schemas"]
+    Controllers --> Services["Application services"]
+    Services --> Repositories["Repositories"]
+    Repositories --> Models["SQLAlchemy models"]
     Models --> SQLite["SQLite database"]
-    Tests["Pytest suite"] --> Routes
+    Tests["Pytest suite"] --> Controllers
     Tests --> Services
+    Tests --> Repositories
 ```
 
 ## Course Terminology Mapping
 
 Some course examples describe the architecture as Controller -> Service -> Repository -> Database. This project keeps an idiomatic FastAPI structure while preserving the same responsibilities:
 
-- Controller in the course = `app/api/routes` in this project.
-- Model in the course = `app/schemas` for API contracts and `app/db/models.py` for SQLAlchemy persistence models.
+- Controller in the course = `app/controllers` in this project.
+- Model in the course = `app/schemas` for API contracts and `app/models/work_item_model.py` for SQLAlchemy persistence models.
 - Service in the course = `app/services` in this project.
-- Repository in the course = intentionally omitted/deferred because SQLAlchemy access is small and simple in this MVP.
+- Repository in the course = `app/repositories` in this project.
 - Database/session setup = `app/db/database.py`.
 
 ## Request Flow
 
 1. A client calls a FastAPI endpoint.
 2. The route validates input using Pydantic schemas.
-3. CRUD routes use the work item service and a SQLAlchemy session.
-4. The service reads or writes SQLite data through SQLAlchemy models.
-5. The route returns a Pydantic response model.
+3. CRUD controllers use the work item service and a SQLAlchemy session.
+4. The service delegates persistence operations to the repository.
+5. The repository reads or writes SQLite data through SQLAlchemy models.
+6. The controller returns a Pydantic response model.
 
 ```mermaid
 sequenceDiagram
     participant Client
-    participant API as FastAPI CRUD route
+    participant API as FastAPI CRUD controller
     participant Schema as Pydantic schema
     participant Service as Work item service
+    participant Repo as Work item repository
     participant DB as SQLite via SQLAlchemy
 
     Client->>API: POST/GET/PATCH/DELETE /work-items
     API->>Schema: Validate request or response
     API->>Service: Call CRUD operation
-    Service->>DB: Read or write work item
-    DB-->>Service: Return model data
+    Service->>Repo: Delegate persistence
+    Repo->>DB: Read or write work item
+    DB-->>Repo: Return model data
+    Repo-->>Service: Return result
     Service-->>API: Return result
     API-->>Client: JSON response or status code
 ```

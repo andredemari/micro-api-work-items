@@ -9,9 +9,9 @@ from sqlalchemy.pool import StaticPool
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
-from app.db import models  # noqa: E402,F401
 from app.db.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
+from app.models import work_item_model  # noqa: E402,F401
 
 test_engine = create_engine(
     "sqlite://",

@@ -137,8 +137,10 @@ python -m uvicorn app.main:app --reload
 ```text
 .
 |-- app/
-|   |-- api/routes/        # FastAPI route handlers
-|   |-- db/                # SQLAlchemy model and session setup
+|   |-- controllers/       # FastAPI route handlers
+|   |-- db/                # Database engine and session setup
+|   |-- models/            # SQLAlchemy persistence models
+|   |-- repositories/      # Persistence access functions
 |   |-- schemas/           # Pydantic request and response schemas
 |   `-- services/          # Work item CRUD and classifier logic
 |-- data/                  # Local SQLite directory; database files are ignored
@@ -152,21 +154,22 @@ python -m uvicorn app.main:app --reload
 
 Course architecture terminology maps to this FastAPI project as follows:
 
-- Controller = `app/api/routes`
-- Model = `app/schemas` for API contracts and `app/db/models.py` for persistence
+- Controller = `app/controllers`
+- Model = `app/schemas` for API contracts and `app/models/work_item_model.py` for persistence
 - Service = `app/services`
-- Repository = deferred/omitted for this small MVP because SQLAlchemy access is simple
+- Repository = `app/repositories`
 - Database/session = `app/db/database.py`
 
 ## Architecture Overview
 
 ```mermaid
 flowchart TD
-    Client["HTTP client"] --> Routes["FastAPI routes"]
-    Routes --> Schemas["Pydantic schemas"]
-    Routes --> Services["Work item service"]
-    Services --> SQLite["SQLite via SQLAlchemy"]
-    Routes --> Classifier["Local classifier service"]
+    Client["HTTP client"] --> Controllers["FastAPI controllers"]
+    Controllers --> Schemas["Pydantic schemas"]
+    Controllers --> Services["Work item service"]
+    Services --> Repository["Work item repository"]
+    Repository --> SQLite["SQLite via SQLAlchemy"]
+    Controllers --> Classifier["Local classifier service"]
     Classifier --> Suggestions["Suggestions only"]
 ```
 
@@ -210,7 +213,7 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `27 passed`.
+Current verification result: `36 passed`.
 
 ```bash
 make test
@@ -231,6 +234,7 @@ The test suite covers:
 - tags and metadata persistence;
 - `updated_at` behavior;
 - service-level CRUD behavior;
+- repository-level persistence behavior;
 - classifier service behavior;
 - deterministic classifier output;
 - classifier non-persistence;

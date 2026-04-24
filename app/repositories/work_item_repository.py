@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import WorkItem, utc_now
+from app.models.work_item_model import WorkItem, utc_now
 
 
 def create_work_item(db: Session, values: Mapping[str, Any]) -> WorkItem:

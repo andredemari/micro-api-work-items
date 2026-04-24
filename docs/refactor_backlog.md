@@ -10,9 +10,9 @@ The project is already a working academic FastAPI MVP. The goal of this roadmap 
 
 The current application is organized as a small FastAPI backend:
 
-- `app/api/routes/` contains FastAPI route handlers.
+- `app/controllers/` contains FastAPI route handlers.
 - `app/schemas/` contains Pydantic request and response schemas.
-- `app/db/models.py` contains the SQLAlchemy persistence model.
+- `app/models/work_item_model.py` contains the SQLAlchemy persistence model.
 - `app/db/database.py` contains database engine, session, and schema initialization.
 - `app/services/work_items.py` contains CRUD service logic.
 - `app/services/classifier.py` contains deterministic local classification rules.
@@ -100,9 +100,9 @@ This distinction is important because the course may use the term "model" broadl
 
 | Current location | Target location | Purpose | Migration note |
 | --- | --- | --- | --- |
-| `app/api/routes/health.py` | `app/controllers/health_controller.py` | Health endpoint controller | Preserve `GET /health`. |
-| `app/api/routes/work_items.py` | `app/controllers/work_item_controller.py` | Work item API controller | Preserve all `/work-items` routes. |
-| `app/db/models.py` | `app/models/work_item_model.py` | SQLAlchemy persistence model | Preserve table and column behavior. |
+| `app/controllers/health_controller.py` | `app/controllers/health_controller.py` | Health endpoint controller | Preserve `GET /health`. |
+| `app/controllers/work_item_controller.py` | `app/controllers/work_item_controller.py` | Work item API controller | Preserve all `/work-items` routes. |
+| `app/models/work_item_model.py` | `app/models/work_item_model.py` | SQLAlchemy persistence model | Preserve table and column behavior. |
 | `app/db/database.py` | `app/db/database.py` | Engine/session/schema setup | Keep location unless a later refactor requires otherwise. |
 | `app/schemas/work_items.py` | `app/schemas/work_items.py` | Pydantic API contracts | Keep location and public schema behavior. |
 | `app/services/work_items.py` | `app/services/work_item_service.py` | Work item service orchestration | Rename only when low risk. |
@@ -260,8 +260,8 @@ Near-term planning should stay at Level 1 or Level 2.
 | ID | Phase | Item | Rationale | Likely files affected | Tests | Acceptance criteria | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | REF-000 | 0 | Create refactor roadmap | Establish public-safe incremental plan | `docs/refactor_backlog.md` | Not required | Roadmap exists; no app behavior changes | Done |
-| REF-001 | 1 | Move route modules to controllers | Align with course Controller terminology | `app/controllers/*`, `app/main.py`, imports | Full suite | Public routes unchanged; tests pass | Planned |
-| REF-002 | 1 | Move SQLAlchemy model to models layer | Separate database models from database setup | `app/models/work_item_model.py`, imports | Full suite | Table behavior unchanged; tests pass | Planned |
+| REF-001 | 1 | Move route modules to controllers | Align with course Controller terminology | `app/controllers/*`, `app/main.py`, imports | Full suite | Public routes unchanged; tests pass | Done |
+| REF-002 | 1 | Move SQLAlchemy model to models layer | Separate database models from database setup | `app/models/work_item_model.py`, imports | Full suite | Table behavior unchanged; tests pass | Done |
 | REF-003 | 2 | Add work item repository | Isolate SQLAlchemy persistence operations | `app/repositories/work_item_repository.py`, service imports | Repository/service/API tests | Service uses repository; API unchanged | Done |
 | REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
 | REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Planned |
