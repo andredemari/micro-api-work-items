@@ -22,6 +22,12 @@ Flask would also be a valid option for a small API, but FastAPI was chosen becau
 
 SQLAlchemy reserves the `metadata` attribute on declarative models. The database column is still named `metadata`, but the Python model uses `metadata_json` internally and the API exposes `metadata`.
 
+## Repository Layer Deferred For MVP
+
+An explicit `app/repositories/work_items.py` layer was considered, but it would mostly add indirection for the current MVP. The service layer currently performs a small set of simple SQLAlchemy operations, so keeping that access local is easier to read for an introductory academic project.
+
+This decision can be revisited if persistence logic grows, if multiple storage backends are introduced, or if repository-level tests become more useful than the current service/API test boundary.
+
 ## PATCH Only For Updates
 
 The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionally not included.
@@ -33,6 +39,12 @@ The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionall
 ## Local Deterministic Classification
 
 Classification uses keyword rules only. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
+
+## External AI Runtime Integration Deferred
+
+Runtime integration with external AI providers is out of scope for this MVP. The classifier is intentionally local, deterministic, and usable without credentials or paid API calls.
+
+If external AI integration is explored in a future version, it should be optional and should include credential management, timeout handling, error handling, and a local deterministic fallback. This project does not introduce provider variables or runtime AI behavior.
 
 ## Environment Variables
 
