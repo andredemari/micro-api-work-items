@@ -22,11 +22,13 @@ Flask would also be a valid option for a small API, but FastAPI was chosen becau
 
 SQLAlchemy reserves the `metadata` attribute on declarative models. The database column is still named `metadata`, but the Python model uses `metadata_json` internally and the API exposes `metadata`.
 
-## Repository Layer Deferred For MVP
+## Repository Layer Introduced After MVP Hardening
 
-An explicit `app/repositories/work_items.py` layer was considered, but it would mostly add indirection for the current MVP. The service layer currently performs a small set of simple SQLAlchemy operations, so keeping that access local is easier to read for an introductory academic project.
+The repository layer was introduced after the initial MVP hardening phase to better align the project with the course layered architecture.
 
-This decision can be revisited if persistence logic grows, if multiple storage backends are introduced, or if repository-level tests become more useful than the current service/API test boundary.
+`app/repositories/` isolates SQLAlchemy persistence operations such as create, list, get, update, and delete. The service layer keeps application orchestration and delegates persistence details to the repository.
+
+The repository layer is intentionally small and behavior-preserving. It does not change public routes, schemas, response formats, database tables, or runtime behavior.
 
 ## PATCH Only For Updates
 

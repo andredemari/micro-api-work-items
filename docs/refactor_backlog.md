@@ -381,18 +381,14 @@ docs: update architecture after refactor phases
 
 Each implementation commit should be small and behavior-preserving unless a future change is explicitly approved.
 
-## Recommended First Implementation Task After Planning
+## Recommended Next Planning Step
 
-After this planning document is committed, the safest first implementation task is:
+The completed refactor tasks now cover REF-001 through REF-005. The next roadmap item is REF-006:
 
 ```text
-refactor: add repository layer for work items
+REF-006: Add local provider interface
 ```
 
-Reason:
+REF-006 should be planned separately before any implementation. That plan should confirm whether a provider interface is still useful, how to keep local deterministic behavior as the default, and how to avoid adding external providers, credentials, environment variables, or new dependencies.
 
-- It improves layering without changing public routes.
-- It keeps folder renaming churn lower than a full controller/model move.
-- It reduces coupling before broader folder moves.
-- It can be verified with existing service/API tests plus small repository tests.
-- It prepares the service layer for later PriorityAdvisor and provider refactors.
+This documentation consistency patch does not implement REF-006.
