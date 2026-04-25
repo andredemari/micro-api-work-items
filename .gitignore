@@ -14,15 +14,10 @@ env/
 
 .env
 docs/demo.md
-.private/
-private/
-docs/priv/
-*.private.md
-*.secret.md
-*.local.md
 *.db
 *.sqlite
 *.sqlite3
+*.zip
 data/*.db
 data/*.sqlite
 data/*.sqlite3

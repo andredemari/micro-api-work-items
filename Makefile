@@ -1,4 +1,4 @@
-.PHONY: install run test
+.PHONY: install run test safety-check install-hooks
 
 install:
 	python -m pip install -r requirements.txt
@@ -8,3 +8,9 @@ run:
 
 test:
 	python -m pytest -q
+
+safety-check:
+	python scripts/safety_check.py
+
+install-hooks:
+	python scripts/install_git_hooks.py

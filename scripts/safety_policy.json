@@ -1,0 +1,106 @@
+{
+  "sensitive_paths": [
+    {"id": "PATH-PRIVATE-DOTDIR", "kind": "prefix", "pattern": ".private/"},
+    {"id": "PATH-PRIVATE-DIR", "kind": "prefix", "pattern": "private/"},
+    {"id": "PATH-DOCS-PRIVATE-DIR", "kind": "prefix", "pattern": "docs/priv/"},
+    {"id": "PATH-KNOWN-INCIDENT", "kind": "exact", "pattern": "docs/demo.md"},
+    {"id": "PATH-PRIVATE-MARKDOWN", "kind": "glob", "pattern": "*.private.md"},
+    {"id": "PATH-SECRET-MARKDOWN", "kind": "glob", "pattern": "*.secret.md"},
+    {"id": "PATH-LOCAL-MARKDOWN", "kind": "glob", "pattern": "*.local.md"}
+  ],
+  "tracked_artifact_paths": [
+    {"id": "ARTIFACT-DATABASE-DB", "kind": "suffix", "pattern": ".db"},
+    {"id": "ARTIFACT-DATABASE-SQLITE", "kind": "suffix", "pattern": ".sqlite"},
+    {"id": "ARTIFACT-DATABASE-SQLITE3", "kind": "suffix", "pattern": ".sqlite3"},
+    {"id": "ARTIFACT-ENV-FILE", "kind": "exact", "pattern": ".env"},
+    {"id": "ARTIFACT-ZIP", "kind": "suffix", "pattern": ".zip"},
+    {"id": "ARTIFACT-PYCACHE", "kind": "segment", "pattern": "__pycache__"},
+    {"id": "ARTIFACT-PYTEST-CACHE", "kind": "segment", "pattern": ".pytest_cache"}
+  ],
+  "known_incident_paths": [
+    {"id": "HISTORY-KNOWN-INCIDENT", "path": "docs/demo.md"}
+  ],
+  "public_reference_scopes": [
+    "README.md",
+    "docs/*.md"
+  ],
+  "public_reference_allowlist_paths": [
+    "docs/security_checks.md",
+    "docs/security_cleanup_runbook.md",
+    "docs/information_governance.md"
+  ],
+  "forbidden_public_references": [
+    {"id": "PUBLIC-INCIDENT-PATH", "text": "docs/demo.md"},
+    {"id": "PUBLIC-INCIDENT-FILENAME", "text": "demo.md"},
+    {"id": "PUBLIC-DEMO-SCRIPT", "text": "demo script"},
+    {"id": "PUBLIC-TECHNICAL-DEMO", "text": "technical demo"}
+  ],
+  "secret_detectors": [
+    {"id": "SECRET-PRIVATE-KEY-BLOCK", "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----"},
+    {"id": "SECRET-GITHUB-PAT", "pattern": "gh[pousr]_[A-Za-z0-9_]{36,}"},
+    {"id": "SECRET-AWS-ACCESS-KEY", "pattern": "AKIA[0-9A-Z]{16}"}
+  ],
+  "assignment_secret_detector": {
+    "id": "SECRET-ASSIGNMENT",
+    "pattern": "(?i)\\b(api[_-]?key|token|password|secret)\\b\\s*[:=]\\s*['\\\"]?([^'\\\"\\s#]+)"
+  },
+  "placeholder_values": [
+    "",
+    "<api-key>",
+    "<key>",
+    "<password>",
+    "<secret>",
+    "<token>",
+    "<your-api-key>",
+    "<your-token>",
+    "change-me",
+    "changeme",
+    "example",
+    "example-token",
+    "none",
+    "not-set",
+    "null",
+    "placeholder",
+    "replace-me",
+    "your-api-key",
+    "your-token"
+  ],
+  "runtime_scopes": [
+    "app/**",
+    "requirements.txt",
+    ".env.example"
+  ],
+  "documentation_scopes": [
+    "docs/**",
+    "README.md"
+  ],
+  "runtime_provider_terms": [
+    {"id": "PROVIDER-OPENAI", "pattern": "(?i)\\bopenai\\b|OPENAI_API_KEY|OPENAI_MODEL"},
+    {"id": "PROVIDER-ANTHROPIC", "pattern": "(?i)\\banthropic\\b|ANTHROPIC_API_KEY"},
+    {"id": "PROVIDER-GEMINI", "pattern": "(?i)\\bgemini\\b|GOOGLE_API_KEY|GEMINI_API_KEY"},
+    {"id": "PROVIDER-GROQ", "pattern": "(?i)\\bgroq\\b|GROQ_API_KEY"},
+    {"id": "PROVIDER-OPENROUTER", "pattern": "(?i)\\bopenrouter\\b|OPENROUTER_API_KEY"}
+  ],
+  "provider_runtime_path_patterns": [
+    {"id": "PROVIDER-REGISTRY-FILE", "kind": "glob", "pattern": "app/providers/**/registry.py"},
+    {"id": "PROVIDER-ROOT-REGISTRY-FILE", "kind": "exact", "pattern": "app/providers/registry.py"},
+    {"id": "PROVIDER-EXTERNAL-FILE", "kind": "glob", "pattern": "app/providers/**/*external*.py"},
+    {"id": "PROVIDER-VENDOR-FILE", "kind": "glob", "pattern": "app/providers/**/*openai*.py"},
+    {"id": "PROVIDER-VENDOR-FILE", "kind": "glob", "pattern": "app/providers/**/*anthropic*.py"},
+    {"id": "PROVIDER-VENDOR-FILE", "kind": "glob", "pattern": "app/providers/**/*gemini*.py"},
+    {"id": "PROVIDER-VENDOR-FILE", "kind": "glob", "pattern": "app/providers/**/*groq*.py"},
+    {"id": "PROVIDER-VENDOR-FILE", "kind": "glob", "pattern": "app/providers/**/*openrouter*.py"}
+  ],
+  "provider_network_patterns": [
+    {"id": "PROVIDER-NETWORK-REQUESTS", "pattern": "\\brequests\\."},
+    {"id": "PROVIDER-NETWORK-HTTPX", "pattern": "\\bhttpx\\."},
+    {"id": "PROVIDER-NETWORK-AIOHTTP", "pattern": "\\baiohttp\\b"},
+    {"id": "PROVIDER-NETWORK-URLLIB", "pattern": "\\burllib\\.request\\b"},
+    {"id": "PROVIDER-NETWORK-HTTPCLIENT", "pattern": "\\bhttp\\.client\\b"}
+  ],
+  "sql_warning_patterns": [
+    {"id": "SQL-TEXT-CALL", "pattern": "\\btext\\s*\\("},
+    {"id": "SQL-DB-EXECUTE", "pattern": "\\bdb\\.execute\\s*\\("},
+    {"id": "SQL-RAW-KEYWORD", "pattern": "['\\\"]\\s*(SELECT|INSERT|UPDATE|DELETE|DROP)\\b"}
+  ]
+}
