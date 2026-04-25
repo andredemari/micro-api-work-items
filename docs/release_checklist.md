@@ -21,6 +21,7 @@ Use this checklist before submitting the academic MVP.
 - [ ] `docs/decisions.md` explains core technical decisions.
 - [ ] `docs/prompts.md` documents sanitized prompt traceability.
 - [ ] `docs/backlog.md` describes releases and acceptance criteria.
+- [ ] `docs/course_submission_traceability.md` maps course expectations to repository evidence.
 
 ## Verification
 
