@@ -249,7 +249,6 @@ The test suite covers:
 - [docs/decisions.md](docs/decisions.md): technical decisions and deferred scope.
 - [docs/mvp_scope.md](docs/mvp_scope.md): MVP scope and acceptance checklist.
 - [docs/backlog.md](docs/backlog.md): release-oriented backlog.
-- [docs/demo.md](docs/demo.md): short technical demo script.
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
 - [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
 - [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future external provider planning.

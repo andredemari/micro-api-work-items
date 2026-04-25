@@ -26,7 +26,7 @@ This document records public, generic prompts used to support academic reproduci
 | P-009 | API routes | REST route implementation | Expose CRUD and classification behavior under `/work-items` using current MVP routes. | API controller module. | `app/controllers/work_item_controller.py` | `feat: add work item schemas services and CRUD routes` |
 | P-010 | Tests | Acceptance criteria, regression checks | Cover health, CRUD, validation errors, missing items, timestamps, metadata, tags, and classifier non-persistence. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
 | P-011 | Review | Checklist-based review | Validate scope limits, local-only runtime behavior, public-safe docs, tracked artifacts, and final course guidance. | Review notes and final hardening tasks. | `docs/mvp_scope.md`, `docs/release_checklist.md` | `docs: add backlog demo and release checklist` |
-| P-012 | Final documentation/release | Release readiness | Add backlog, demo script, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/demo.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
+| P-012 | Final documentation/release | Release readiness | Add backlog, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
 | P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
 | P-014 | External provider planning | Provider-agnostic future planning | Document optional external provider constraints, safety controls, fallback behavior, and mock-only test strategy without implementing runtime integration. | External provider planning guidance. | `docs/external_provider_plan.md`, `docs/refactor_backlog.md` | `docs: add external provider planning guidance` |
 
@@ -78,7 +78,7 @@ Review the repository against MVP scope, public-safety constraints, test coverag
 
 ### P-012 Final Documentation/Release
 
-Prepare final academic submission documentation with backlog, demo script, release checklist, prompt traceability, reproducibility notes, and verification commands.
+Prepare final academic submission documentation with backlog, release checklist, prompt traceability, reproducibility notes, and verification commands.
 
 ### P-013 Local LLM Planning
 
