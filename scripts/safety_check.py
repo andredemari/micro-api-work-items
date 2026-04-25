@@ -47,7 +47,10 @@ def load_policy(policy_path: Path = DEFAULT_POLICY_PATH) -> dict:
 
 
 def normalize_path(path: str | Path) -> str:
-    return str(path).replace("\\", "/").lstrip("./")
+    normalized = str(path).replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
 
 
 def run_git(repo_path: Path, args: Sequence[str]) -> subprocess.CompletedProcess[str]:
