@@ -296,6 +296,18 @@ Before publication or packaging, run the deterministic safety gate:
 make safety-check
 ```
 
+`make` is optional. The direct Python command is the portable fallback:
+
+```bash
+python scripts/safety_check.py
+```
+
+On Windows with Anaconda, use the full interpreter path when `python` is not available on PATH:
+
+```powershell
+& 'C:\Users\<your-user>\anaconda3\python.exe' scripts\safety_check.py
+```
+
 It checks tracked and staged files, known incident paths, local artifacts, structured secret patterns, and future-provider guardrails without deleting files, rewriting history, or auto-fixing content.
 
 ## Limitations

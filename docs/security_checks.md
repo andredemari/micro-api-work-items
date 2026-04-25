@@ -6,16 +6,22 @@ The checker is intentionally small, local, and non-destructive. It does not use 
 
 ## Commands
 
-Run the default release-oriented check:
+Run the default release-oriented check with Python:
 
 ```powershell
 python scripts/safety_check.py
 ```
 
-Or use the Makefile target:
+Or use the Makefile target when `make` is available:
 
 ```powershell
 make safety-check
+```
+
+`make` is optional. The direct Python command is the portable fallback. On Windows with Anaconda, use the full interpreter path when `python` is not available on PATH:
+
+```powershell
+& 'C:\Users\<your-user>\anaconda3\python.exe' scripts\safety_check.py
 ```
 
 Available modes:
@@ -43,9 +49,11 @@ The safety checker fails on:
 
 The checker warns on:
 
-- suspicious private paths that exist locally but are not tracked or staged;
+- suspicious private paths that exist locally in `working-tree` mode but are not tracked or staged;
 - raw SQL indicators in runtime code;
 - release reminders before publication.
+
+In `release` mode, suspicious local private paths fail because manual packaging can accidentally include untracked files.
 
 ## Output Safety
 
@@ -72,12 +80,18 @@ Hooks are optional and local. Install them only when desired:
 python scripts/install_git_hooks.py
 ```
 
+Generated hooks use the current Python interpreter path by default. To use a custom command, pass it explicitly:
+
+```powershell
+python scripts/install_git_hooks.py --python-command "py -3"
+```
+
 The installer refuses to overwrite existing hooks unless it is run with an explicit force option after human review.
 
 Suggested hook behavior:
 
-- pre-commit: `python scripts/safety_check.py --mode staged`;
-- pre-push: `python scripts/safety_check.py --mode release`.
+- pre-commit: `<selected-python-command> scripts/safety_check.py --mode staged`;
+- pre-push: `<selected-python-command> scripts/safety_check.py --mode release`.
 
 ## Non-Destructive Guarantees
 
