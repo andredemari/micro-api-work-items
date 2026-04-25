@@ -17,8 +17,14 @@ def default_python_command() -> str:
 
 def hook_commands(python_command: str) -> dict[str, str]:
     return {
-        "pre-commit": f"{python_command} scripts/safety_check.py --mode staged\n",
-        "pre-push": f"{python_command} scripts/safety_check.py --mode release\n",
+        "pre-commit": (
+            'cd "$(git rev-parse --show-toplevel)" || exit 1\n'
+            f"{python_command} scripts/safety_check.py --mode staged\n"
+        ),
+        "pre-push": (
+            'cd "$(git rev-parse --show-toplevel)" || exit 1\n'
+            f"{python_command} scripts/safety_check.py --mode release\n"
+        ),
     }
 
 

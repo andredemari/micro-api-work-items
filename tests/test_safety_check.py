@@ -194,10 +194,14 @@ def test_install_hooks_use_selected_python_command(tmp_path: Path) -> None:
 
     assert result == 0
     assert (repo_path / ".git" / "hooks" / "pre-commit").read_text(encoding="utf-8") == (
-        "#!/bin/sh\npy -3 scripts/safety_check.py --mode staged\n"
+        "#!/bin/sh\n"
+        'cd "$(git rev-parse --show-toplevel)" || exit 1\n'
+        "py -3 scripts/safety_check.py --mode staged\n"
     )
     assert (repo_path / ".git" / "hooks" / "pre-push").read_text(encoding="utf-8") == (
-        "#!/bin/sh\npy -3 scripts/safety_check.py --mode release\n"
+        "#!/bin/sh\n"
+        'cd "$(git rev-parse --show-toplevel)" || exit 1\n'
+        "py -3 scripts/safety_check.py --mode release\n"
     )
 
 

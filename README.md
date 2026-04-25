@@ -64,6 +64,13 @@ make test
 make run
 ```
 
+Makefile commands use `PY ?= python`, so the interpreter can be overridden when needed:
+
+```bash
+make PY="C:/Users/<your-user>/anaconda3/python.exe" test
+make PY="C:/Users/<your-user>/anaconda3/python.exe" safety-check
+```
+
 The API will be available at `http://127.0.0.1:8000`.
 
 If `make` is not available in your shell, use the equivalent `python -m ...` commands in the setup details below.
@@ -149,7 +156,7 @@ python -m uvicorn app.main:app --reload
 |-- docs/                  # Architecture, scope, decisions, prompts, and release notes
 |-- tests/                 # API, service, repository, and PriorityAdvisor tests
 |-- .env.example           # Reference-only environment variable example
-|-- Makefile               # install, run, and test commands
+|-- Makefile               # install, run, test, and safety-check commands
 |-- README.md
 `-- requirements.txt
 ```
@@ -243,7 +250,7 @@ The test suite covers:
 - deterministic PriorityAdvisor output;
 - classification non-persistence;
 - isolated SQLite test database;
-- deterministic repository safety checks.
+- deterministic safety gate checks.
 
 ## Documentation Map
 
@@ -294,6 +301,12 @@ Before publication or packaging, run the deterministic safety gate:
 
 ```bash
 make safety-check
+```
+
+For Windows/Anaconda users running Makefile commands:
+
+```bash
+make PY="C:/Users/<your-user>/anaconda3/python.exe" safety-check
 ```
 
 `make` is optional. The direct Python command is the portable fallback:
@@ -350,7 +363,8 @@ See [docs/prompts.md](docs/prompts.md) for generic CO-STAR prompt examples used 
 git archive --format=zip --output micro-api-work-items.zip HEAD
 ```
 
-- Run `make safety-check` before packaging.
+- Run `make safety-check` before packaging, or use the direct Python fallback from the Safety Checks section.
+- If `make` is unavailable, run `python scripts/safety_check.py`.
 - Do not zip the whole working directory manually because it may include `.git`, `.venv`, `__pycache__`, `.pytest_cache`, or local database files.
 
 ## License

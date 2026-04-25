@@ -1,16 +1,20 @@
-.PHONY: install run test safety-check install-hooks
+PY ?= python
+
+.PHONY: install run test safety-check install-hooks verify
 
 install:
-	python -m pip install -r requirements.txt
+	$(PY) -m pip install -r requirements.txt
 
 run:
-	python -m uvicorn app.main:app --reload
+	$(PY) -m uvicorn app.main:app --reload
 
 test:
-	python -m pytest -q
+	$(PY) -m pytest -q
 
 safety-check:
-	python scripts/safety_check.py
+	$(PY) scripts/safety_check.py
 
 install-hooks:
-	python scripts/install_git_hooks.py
+	$(PY) scripts/install_git_hooks.py
+
+verify: test safety-check

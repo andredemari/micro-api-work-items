@@ -18,6 +18,12 @@ Or use the Makefile target when `make` is available:
 make safety-check
 ```
 
+Makefile commands use `PY ?= python`, so Windows/Anaconda users can override the interpreter:
+
+```powershell
+make PY="C:/Users/<your-user>/anaconda3/python.exe" safety-check
+```
+
 `make` is optional. The direct Python command is the portable fallback. On Windows with Anaconda, use the full interpreter path when `python` is not available on PATH:
 
 ```powershell
@@ -87,6 +93,12 @@ python scripts/install_git_hooks.py --python-command "py -3"
 ```
 
 The installer refuses to overwrite existing hooks unless it is run with an explicit force option after human review.
+
+Generated hooks change to the repository root before running the checker:
+
+```sh
+cd "$(git rev-parse --show-toplevel)" || exit 1
+```
 
 Suggested hook behavior:
 
