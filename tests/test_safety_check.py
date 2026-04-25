@@ -1,6 +1,8 @@
 import subprocess
+import sys
 from pathlib import Path
 
+from scripts.install_git_hooks import default_python_command, install_hooks
 from scripts.safety_check import Finding, load_policy, run_checks
 
 
@@ -64,6 +66,15 @@ def test_untracked_private_path_warns_but_does_not_fail(tmp_path: Path) -> None:
     assert not failure_ids(findings)
 
 
+def test_release_mode_fails_on_untracked_private_path(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+    write_file(repo_path, ".private/local-note.txt")
+
+    findings = run_checks(repo_path, "release", load_policy())
+
+    assert "PATH-PRIVATE-DOTDIR" in failure_ids(findings)
+
+
 def test_known_incident_path_in_history_fails_in_temp_repo(tmp_path: Path) -> None:
     repo_path = init_repo(tmp_path)
     write_file(repo_path, "docs/demo.md", "private content\n")
@@ -111,7 +122,7 @@ def test_allowed_governance_reference_does_not_fail(tmp_path: Path) -> None:
 
 def test_secret_assignment_output_is_redacted(tmp_path: Path) -> None:
     repo_path = init_repo(tmp_path)
-    raw_value = "super-" + "secret-" + "value"
+    raw_value = "alpha-" + "bravo-" + "omega"
     field_name = "pass" + "word"
     write_file(repo_path, "settings.py", f'{field_name} = "{raw_value}"\n')
     run_git(repo_path, "add", "settings.py")
@@ -121,7 +132,9 @@ def test_secret_assignment_output_is_redacted(tmp_path: Path) -> None:
 
     assert "SECRET-ASSIGNMENT" in failure_ids(findings)
     assert raw_value not in output
-    assert "(redacted)" in output
+    assert raw_value[:5] not in output
+    assert raw_value[-5:] not in output
+    assert "<redacted>" in output
 
 
 def test_placeholder_secret_assignment_does_not_fail(tmp_path: Path) -> None:
@@ -167,3 +180,33 @@ def test_raw_sql_indicator_is_warning_only(tmp_path: Path) -> None:
 
     assert "SQL-DB-EXECUTE" in warning_ids(findings)
     assert not failure_ids(findings)
+
+
+def test_default_hook_python_command_uses_current_interpreter() -> None:
+    assert sys.executable in default_python_command()
+    assert default_python_command() != "python"
+
+
+def test_install_hooks_use_selected_python_command(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+
+    result = install_hooks(repo_path, python_command="py -3")
+
+    assert result == 0
+    assert (repo_path / ".git" / "hooks" / "pre-commit").read_text(encoding="utf-8") == (
+        "#!/bin/sh\npy -3 scripts/safety_check.py --mode staged\n"
+    )
+    assert (repo_path / ".git" / "hooks" / "pre-push").read_text(encoding="utf-8") == (
+        "#!/bin/sh\npy -3 scripts/safety_check.py --mode release\n"
+    )
+
+
+def test_install_hooks_refuse_to_overwrite_existing_hooks(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+    hook_path = repo_path / ".git" / "hooks" / "pre-commit"
+    hook_path.write_text("#!/bin/sh\ncustom\n", encoding="utf-8")
+
+    result = install_hooks(repo_path, python_command="py -3")
+
+    assert result == 1
+    assert hook_path.read_text(encoding="utf-8") == "#!/bin/sh\ncustom\n"
