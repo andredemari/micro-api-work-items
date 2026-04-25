@@ -36,7 +36,9 @@ Do not commit:
 
 ## Local Private Working Areas
 
-Keep sensitive material outside the repository when possible. If temporary local notes must exist near the project, use ignored local-only locations such as:
+Keep sensitive material outside the repository when possible. If temporary local notes must exist near the project, keep them out of Git and review them before publication.
+
+The deterministic safety checker treats patterns such as these as private-path risks if they are staged or tracked:
 
 - `.private/`
 - `private/`
@@ -45,7 +47,7 @@ Keep sensitive material outside the repository when possible. If temporary local
 - `*.secret.md`
 - `*.local.md`
 
-Ignored files are not a security boundary. They reduce accidental commits, but local files can still be copied, backed up, or force-added. Review carefully before publication.
+These patterns are enforced by `scripts/safety_policy.json` and `scripts/safety_check.py`, not by turning `.gitignore` into a broad policy registry. Ignored files are not a security boundary; local files can still be copied, backed up, or force-added.
 
 ## Governance Principles
 
@@ -61,8 +63,8 @@ Before publishing or packaging:
 
 ```powershell
 git status --short
-git grep -n "secret\|token\|password\|credential\|private\|internal"
-git ls-files | Select-String -Pattern "\.db$|\.sqlite$|\.sqlite3$|__pycache__|\.env$|\.pytest_cache|\.zip$|\.private/|private/|docs/priv/"
+python scripts/safety_check.py
+make safety-check
 ```
 
-Use judgment with search results. Some public-safe governance documents may mention these words while explaining what must not be committed.
+Use the deterministic checker as the main gate. Manual searches may still help during review, but broad keyword searches can produce misleading results because governance documents legitimately mention words such as secret, token, credential, private, and internal.

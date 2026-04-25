@@ -17,6 +17,7 @@ A work item is a generic task-like record that can represent a task, bug, improv
 - [Tests](#tests)
 - [Documentation Map](#documentation-map)
 - [Troubleshooting](#troubleshooting)
+- [Safety Checks](#safety-checks)
 - [Limitations](#limitations)
 - [How Generative AI Was Used](#how-generative-ai-was-used)
 - [Packaging And Submission Notes](#packaging-and-submission-notes)
@@ -215,7 +216,7 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `40 passed`.
+Current verification result: `52 passed`.
 
 ```bash
 make test
@@ -241,7 +242,8 @@ The test suite covers:
 - local provider behavior;
 - deterministic PriorityAdvisor output;
 - classification non-persistence;
-- isolated SQLite test database.
+- isolated SQLite test database;
+- deterministic repository safety checks.
 
 ## Documentation Map
 
@@ -252,6 +254,7 @@ The test suite covers:
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
 - [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
 - [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future external provider planning.
+- [docs/security_checks.md](docs/security_checks.md): deterministic safety-check workflow.
 - [docs/security_cleanup_runbook.md](docs/security_cleanup_runbook.md): cleanup guidance for accidental sensitive commits.
 - [docs/information_governance.md](docs/information_governance.md): public-safe information handling guide.
 - [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
@@ -284,6 +287,16 @@ The next application startup recreates the SQLite schema automatically.
 - If the API returns database-related errors after manual file changes, stop the server, remove `data/work_items.db`, and start the server again.
 - `.env.example` is documentation only; environment variables must be set in the operating system if you want to override defaults.
 - No runtime external LLM provider is used, so no AI provider credentials are needed.
+
+## Safety Checks
+
+Before publication or packaging, run the deterministic safety gate:
+
+```bash
+make safety-check
+```
+
+It checks tracked and staged files, known incident paths, local artifacts, structured secret patterns, and future-provider guardrails without deleting files, rewriting history, or auto-fixing content.
 
 ## Limitations
 
@@ -325,6 +338,7 @@ See [docs/prompts.md](docs/prompts.md) for generic CO-STAR prompt examples used 
 git archive --format=zip --output micro-api-work-items.zip HEAD
 ```
 
+- Run `make safety-check` before packaging.
 - Do not zip the whole working directory manually because it may include `.git`, `.venv`, `__pycache__`, `.pytest_cache`, or local database files.
 
 ## License

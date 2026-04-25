@@ -112,7 +112,8 @@ def test_allowed_governance_reference_does_not_fail(tmp_path: Path) -> None:
 def test_secret_assignment_output_is_redacted(tmp_path: Path) -> None:
     repo_path = init_repo(tmp_path)
     raw_value = "super-" + "secret-" + "value"
-    write_file(repo_path, "settings.py", f'password = "{raw_value}"\n')
+    field_name = "pass" + "word"
+    write_file(repo_path, "settings.py", f'{field_name} = "{raw_value}"\n')
     run_git(repo_path, "add", "settings.py")
 
     findings = run_checks(repo_path, "release", load_policy())

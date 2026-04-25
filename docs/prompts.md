@@ -30,6 +30,7 @@ This document records public, generic prompts used to support academic reproduci
 | P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
 | P-014 | External provider planning | Provider-agnostic future planning | Document optional external provider constraints, safety controls, fallback behavior, and mock-only test strategy without implementing runtime integration. | External provider planning guidance. | `docs/external_provider_plan.md`, `docs/refactor_backlog.md` | `docs: add external provider planning guidance` |
 | P-015 | Security governance | Public-safety hardening | Add preventive governance docs and ignore rules for private notes, credentials, local artifacts, and sensitive files. | Security cleanup runbook and information governance guide. | `.gitignore`, `docs/security_cleanup_runbook.md`, `docs/information_governance.md` | `docs: add security governance and cleanup runbook` |
+| P-016 | Safety gate | Deterministic policy checks | Add a non-destructive safety checker for staged, tracked, history, and release checks without using AI, dependencies, or auto-fixes. | Safety checker, tests, and workflow documentation. | `scripts/safety_check.py`, `scripts/safety_policy.json`, `docs/security_checks.md` | `chore: add deterministic safety check`; `test: add safety check coverage`; `docs: document safety check workflow` |
 
 ## Compact Sanitized Prompt Examples
 
@@ -92,6 +93,10 @@ Document future optional external provider integration in provider-agnostic term
 ### P-015 Security Governance
 
 Add public-safe governance guidance for accidental sensitive commits, ignored private working areas, information classification, and pre-publication review without changing runtime behavior.
+
+### P-016 Safety Gate
+
+Implement a deterministic, non-destructive repository safety gate with explicit policy checks, redacted findings, isolated tests, optional hooks, and documentation for manual and release use.
 
 ## Privacy And Scope Rules
 

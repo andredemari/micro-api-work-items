@@ -101,6 +101,7 @@ git status --short
 git log --all -- <path>
 git ls-files <path>
 git grep -n "<path-or-safe-pattern>"
+python scripts/safety_check.py
 python -m pytest -q
 git ls-files | Select-String -Pattern "\.db$|\.sqlite$|\.sqlite3$|__pycache__|\.env$|\.pytest_cache|\.zip$"
 ```
@@ -110,6 +111,7 @@ Expected results:
 - The sensitive path is absent from `git log --all -- <path>`.
 - The sensitive path is absent from `git ls-files <path>`.
 - Only intentional ignore rules remain.
+- The deterministic safety checker passes.
 - Tests pass.
 - The working tree is clean.
 - No local artifacts are tracked.
