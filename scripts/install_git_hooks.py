@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import os
+import shlex
 import stat
 import subprocess
 import sys
@@ -11,10 +11,15 @@ from pathlib import Path
 from typing import Sequence
 
 
-HOOKS = {
-    "pre-commit": "python scripts/safety_check.py --mode staged\n",
-    "pre-push": "python scripts/safety_check.py --mode release\n",
-}
+def default_python_command() -> str:
+    return shlex.quote(sys.executable)
+
+
+def hook_commands(python_command: str) -> dict[str, str]:
+    return {
+        "pre-commit": f"{python_command} scripts/safety_check.py --mode staged\n",
+        "pre-push": f"{python_command} scripts/safety_check.py --mode release\n",
+    }
 
 
 def repo_root() -> Path:
@@ -29,11 +34,11 @@ def repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def install_hooks(root: Path, force: bool = False) -> int:
+def install_hooks(root: Path, python_command: str, force: bool = False) -> int:
     hooks_dir = root / ".git" / "hooks"
     hooks_dir.mkdir(parents=True, exist_ok=True)
 
-    for name, command in HOOKS.items():
+    for name, command in hook_commands(python_command).items():
         hook_path = hooks_dir / name
         if hook_path.exists() and not force:
             print(f"Refusing to overwrite existing hook: {hook_path}")
@@ -54,10 +59,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="overwrite existing hooks; use only after reviewing current hook contents",
     )
+    parser.add_argument(
+        "--python-command",
+        default=default_python_command(),
+        help="shell command used by hooks to run Python; defaults to the current interpreter path",
+    )
     args = parser.parse_args(argv)
 
     try:
-        return install_hooks(repo_root(), force=args.force)
+        return install_hooks(repo_root(), python_command=args.python_command, force=args.force)
     except RuntimeError as exc:
         print(str(exc), file=sys.stderr)
         return 2

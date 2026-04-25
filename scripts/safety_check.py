@@ -143,9 +143,7 @@ def read_staged_text(repo_path: Path, path: str) -> str | None:
 
 
 def redacted_value(value: str) -> str:
-    if len(value) <= 4:
-        return "<redacted>"
-    return f"{value[:2]}...{value[-2:]} (redacted)"
+    return "<redacted>"
 
 
 def is_placeholder(value: str, placeholders: set[str]) -> bool:
@@ -372,13 +370,23 @@ def run_checks(repo_path: Path, mode: str, policy: dict) -> list[Finding]:
     staged = staged_paths(repo_path)
     findings: list[Finding] = []
 
-    if mode in {"working-tree", "release"}:
+    if mode == "working-tree":
         findings.extend(
             check_path_policy(
                 untracked_paths(repo_path),
                 policy["sensitive_paths"],
                 "warn",
                 "suspicious private path exists locally; do not stage or track",
+            )
+        )
+
+    if mode == "release":
+        findings.extend(
+            check_path_policy(
+                untracked_paths(repo_path),
+                policy["sensitive_paths"],
+                "fail",
+                "suspicious private path exists locally; remove it before release packaging",
             )
         )
 
