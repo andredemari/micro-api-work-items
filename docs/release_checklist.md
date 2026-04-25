@@ -27,6 +27,10 @@ Use this checklist before submitting the academic MVP.
 - [ ] `python -m pytest -q` passes.
 - [ ] `git status --short` is clean.
 - [ ] No `.db`, `.sqlite`, `.sqlite3`, `.env`, `__pycache__`, `.pytest_cache`, or local artifact is tracked by Git.
+- [ ] No private working folders such as `.private/`, `private/`, or `docs/priv/` are tracked by Git.
+- [ ] No private strategy files, local notes, credentials, customer data, or sensitive personal data are tracked by Git.
+- [ ] No ignored private files were force-added with `git add -f`.
+- [ ] `git grep` was run for sensitive path and name patterns before publication.
 - [ ] Conventional Commit history is present.
 - [ ] MIT License is present.
 

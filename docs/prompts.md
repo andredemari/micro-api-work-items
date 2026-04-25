@@ -29,6 +29,7 @@ This document records public, generic prompts used to support academic reproduci
 | P-012 | Final documentation/release | Release readiness | Add backlog, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
 | P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
 | P-014 | External provider planning | Provider-agnostic future planning | Document optional external provider constraints, safety controls, fallback behavior, and mock-only test strategy without implementing runtime integration. | External provider planning guidance. | `docs/external_provider_plan.md`, `docs/refactor_backlog.md` | `docs: add external provider planning guidance` |
+| P-015 | Security governance | Public-safety hardening | Add preventive governance docs and ignore rules for private notes, credentials, local artifacts, and sensitive files. | Security cleanup runbook and information governance guide. | `.gitignore`, `docs/security_cleanup_runbook.md`, `docs/information_governance.md` | `docs: add security governance and cleanup runbook` |
 
 ## Compact Sanitized Prompt Examples
 
@@ -87,6 +88,10 @@ Document optional local LLM setup with Ollama for future experimentation, keepin
 ### P-014 External Provider Planning
 
 Document future optional external provider integration in provider-agnostic terms, requiring credential safety, timeouts, schema validation, local fallback, privacy controls, and mock-only tests before any implementation.
+
+### P-015 Security Governance
+
+Add public-safe governance guidance for accidental sensitive commits, ignored private working areas, information classification, and pre-publication review without changing runtime behavior.
 
 ## Privacy And Scope Rules
 

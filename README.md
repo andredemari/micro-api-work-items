@@ -145,7 +145,7 @@ python -m uvicorn app.main:app --reload
 |   |-- schemas/           # Pydantic request and response schemas
 |   `-- services/          # Work item CRUD and PriorityAdvisor logic
 |-- data/                  # Local SQLite directory; database files are ignored
-|-- docs/                  # Architecture, scope, decisions, prompts, demo, release notes
+|-- docs/                  # Architecture, scope, decisions, prompts, and release notes
 |-- tests/                 # API, service, repository, and PriorityAdvisor tests
 |-- .env.example           # Reference-only environment variable example
 |-- Makefile               # install, run, and test commands
@@ -252,6 +252,8 @@ The test suite covers:
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
 - [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
 - [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future external provider planning.
+- [docs/security_cleanup_runbook.md](docs/security_cleanup_runbook.md): cleanup guidance for accidental sensitive commits.
+- [docs/information_governance.md](docs/information_governance.md): public-safe information handling guide.
 - [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
 - [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 
