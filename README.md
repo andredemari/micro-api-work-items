@@ -369,4 +369,4 @@ git archive --format=zip --output micro-api-work-items.zip HEAD
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE).

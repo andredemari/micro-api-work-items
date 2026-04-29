@@ -29,7 +29,7 @@ This backlog keeps the MVP small and traceable for the academic submission.
 | ID | Type | Item | Acceptance criteria |
 | --- | --- | --- | --- |
 | RT-01 | Release task | Academic context | README identifies the course context and maps the task API idea to work items. |
-| RT-02 | Release task | License | Repository includes an MIT License. |
+| RT-02 | Release task | License | Repository includes an Apache License 2.0. |
 | RT-03 | Release task | Diagrams | Architecture docs include Mermaid diagrams for layers, CRUD flow, and classifier flow. |
 | RT-04 | Release task | Presentation readiness | README and supporting docs provide enough information for a short technical walkthrough. |
 | RT-05 | Release task | Release checklist | Final checks are listed in `docs/release_checklist.md`. |

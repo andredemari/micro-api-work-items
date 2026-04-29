@@ -34,7 +34,7 @@ Use this checklist before submitting the academic MVP.
 - [ ] No ignored private files were force-added with `git add -f`.
 - [ ] The deterministic safety checker was run before publication or packaging.
 - [ ] Conventional Commit history is present.
-- [ ] MIT License is present.
+- [ ] Apache License 2.0 is present.
 
 ## Out Of Scope Confirmation
 
