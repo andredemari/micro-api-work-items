@@ -1,8 +1,8 @@
 # Refactor Backlog
 
-This backlog is public, post-course maintenance guidance for
-`micro-api-work-items`. It is not required to understand or run the current
-MVP, and it does not expand the release scope.
+This backlog is public, post-course technical maintenance guidance for
+`micro-api-work-items`. It is not required to understand, run, tag, or submit
+the current MVP, and it does not expand the release scope.
 
 The current submission remains:
 
@@ -12,9 +12,8 @@ The current submission remains:
 - focused on `/health`, `/work-items`, and `/work-items/classify`;
 - covered by automated tests and the deterministic safety checker.
 
-Speculative product, platform, governance, or automation ideas should move to
-separate planning after the course submission. They are not part of this public
-MVP release.
+The items below are possible future engineering improvements only. They are
+not part of the current MVP submission.
 
 ## Current Architecture
 
@@ -26,8 +25,8 @@ MVP release.
 | Repositories | `app/repositories/` | SQLAlchemy persistence access. |
 | Models | `app/models/` | SQLAlchemy database model. |
 | Database | `app/db/database.py` | Engine, session, schema initialization, and SQLite directory handling. |
-| Providers | `app/providers/priority/local_provider.py` | Local deterministic PriorityAdvisor rules. |
-| Tests | `tests/` | API, service, repository, provider, PriorityAdvisor, and safety-check tests. |
+| Local provider | `app/providers/priority/local_provider.py` | Local deterministic PriorityAdvisor rules. |
+| Tests | `tests/` | API, service, repository, local provider, PriorityAdvisor, and safety-check tests. |
 
 The public API must remain unchanged unless a future task explicitly approves
 an API change:
@@ -52,8 +51,6 @@ an API change:
 | REF-004 | Add repository-focused tests | Done | `tests/test_work_item_repository.py` |
 | REF-005 | Rename classifier concept to PriorityAdvisor | Done | `app/services/priority_advisor.py` |
 | REF-006 | Add local deterministic provider boundary | Done | `app/providers/priority/local_provider.py` |
-| REF-007 | Document optional local-provider experimentation as future-only | Done | `docs/local_llm_setup.md` |
-| REF-008 | Document optional external-provider planning as future-only | Done | `docs/external_provider_plan.md` |
 
 ## Post-Course Maintenance Backlog
 
@@ -63,14 +60,15 @@ an API change:
 | REF-010 | Add pagination or simple filters | Makes list behavior more realistic for larger local data sets. | Do not add until current MVP is submitted and API change is approved. |
 | REF-011 | Add Alembic migrations | Helps if schema evolution becomes necessary. | Do not add for the current SQLite course MVP. |
 | REF-012 | Improve tag and metadata validation | Tightens input quality after basic CRUD is accepted. | Keep response shape stable unless separately approved. |
-| REF-013 | Revisit identifier strategy | UUIDs may be useful for distributed or public multi-system integration. | Do not replace integer IDs unless external identifier semantics are required. |
-| REF-014 | Revisit optional provider experimentation | Could support future comparison with deterministic suggestions. | Keep current runtime local and deterministic; require separate approval before code, dependencies, credentials, or network calls. |
+| REF-013 | Revisit identifier approach | UUIDs may be useful for distributed or public multi-system integration. | Do not replace integer IDs unless external identifier semantics are required. |
+| REF-014 | Maintain deterministic provider boundary | Keeps suggestion rules separate from service orchestration. | Do not add runtime provider behavior before the current MVP is tagged and submitted. |
 
 ## Provider Boundary
 
 The provider boundary currently exists only to keep deterministic
-PriorityAdvisor rules separate from service orchestration. It should not be
-read as evidence that external providers are part of the current release.
+PriorityAdvisor rules separate from service orchestration. It is a
+maintainability boundary for local suggestions, not an expansion of the current
+MVP scope.
 
 Current rule:
 
@@ -78,16 +76,17 @@ Current rule:
 PriorityAdvisor service -> local deterministic provider -> suggestions only
 ```
 
-Any future provider experiment must preserve these constraints:
+Maintenance work on this boundary must preserve these constraints:
 
-- optional behavior only;
-- no CRUD dependency on provider availability;
+- local deterministic suggestions remain the default behavior;
+- no CRUD dependency on suggestion logic;
 - no committed credentials;
 - no real network calls in tests;
-- schema validation before using provider output;
-- deterministic local fallback remains available.
+- schema validation remains explicit;
+- `POST /work-items/classify` remains side-effect free unless a later API
+  change is separately approved.
 
-## Test Strategy
+## Test Approach
 
 Use automated regression tests, not a claim of formal test-first TDD, as the
 quality evidence for this repository.
@@ -95,8 +94,8 @@ quality evidence for this repository.
 Expected checks after any refactor:
 
 ```powershell
-& 'C:\Users\<your-user>\anaconda3\python.exe' -m pytest -q
-& 'C:\Users\<your-user>\anaconda3\python.exe' scripts\safety_check.py
+python -m pytest -q
+python scripts/safety_check.py
 ```
 
 Minimum expectations:
@@ -104,8 +103,8 @@ Minimum expectations:
 - API tests preserve public routes, status codes, and response shape.
 - Service tests preserve application behavior.
 - Repository tests preserve persistence behavior.
-- PriorityAdvisor and provider tests preserve deterministic suggestions.
-- Safety-check tests preserve public/private boundary behavior.
+- PriorityAdvisor and local-provider tests preserve deterministic suggestions.
+- Safety-check tests preserve publication boundary behavior.
 - No dependency, schema, route, or database change is bundled into a docs-only
   or naming-only refactor.
 
