@@ -1,55 +1,148 @@
 # Decisions
 
-## SQLite For Local Persistence
+This file is a lightweight ADR-style decision log for the academic MVP. Each
+entry records the context, decision, rationale, consequences, and current
+status without splitting the small project into many separate ADR files.
 
-SQLite keeps the MVP simple to run locally while still demonstrating relational persistence through SQLAlchemy.
+## ADR-001: Keep The MVP Local And Course-Oriented
 
-## FastAPI And Pydantic v2
+- Status: Accepted.
+- Context: The project implements a small "Micro-API de Tarefas" style backend
+  for course review and reproducible local execution.
+- Decision: Keep the current release public, academic, deterministic, local,
+  and simple.
+- Rationale: A narrow scope is easier to inspect, run, test, and submit. It
+  also avoids confusing the reviewer with infrastructure that is not required
+  by the course task.
+- Consequences: Authentication, frontend, Docker, CI/CD, external integrations,
+  runtime AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming,
+  and deployment automation are out of scope for this release.
 
-FastAPI provides concise routing and OpenAPI generation. Pydantic v2 provides request and response validation with enum-backed fields.
+## ADR-002: FastAPI, Pydantic V2, SQLAlchemy, And SQLite
 
-## Why FastAPI, Pydantic and SQLAlchemy
+- Status: Accepted.
+- Context: The API needs explicit request validation, clear routes, local
+  persistence, and straightforward automated tests.
+- Decision: Use FastAPI for HTTP routing and OpenAPI support, Pydantic v2 for
+  request and response contracts, SQLAlchemy for persistence, and SQLite for
+  the local database.
+- Rationale: This stack demonstrates the backend concepts with little
+  boilerplate and no external service dependency. Flask would also be valid,
+  but FastAPI reduces manual validation and documentation work.
+- Consequences: The app runs locally with `sqlite:///./data/work_items.db` by
+  default. SQLite is sufficient for the course MVP, but production deployment
+  would require a separate persistence decision.
 
-FastAPI was chosen because the MVP is an API-first backend and FastAPI provides concise route declaration and automatic OpenAPI documentation.
+## ADR-003: Layered Organization For Maintainability
 
-Pydantic v2 is used for request and response validation, making the API contract explicit and easier to test.
+- Status: Accepted.
+- Context: The course vocabulary references controllers, models, services, and
+  persistence. The implementation should be easy to review without overbuilding.
+- Decision: Organize the code into controllers, schemas, services,
+  repositories, SQLAlchemy models, database setup, and providers.
+- Rationale: Controllers own HTTP concerns, schemas define the API contract,
+  services orchestrate behavior, repositories isolate SQLAlchemy access, models
+  map persisted data, and providers isolate suggestion logic.
+- Consequences: The public API remains small while the code has clear
+  maintenance boundaries. The repository layer is intentionally small and does
+  not change routes, schemas, response formats, database tables, or runtime
+  behavior.
 
-SQLAlchemy is used for persistence with SQLite, keeping the project local and simple while demonstrating a relational data model.
+## ADR-004: Separate Pydantic Schemas From SQLAlchemy Models
 
-Flask would also be a valid option for a small API, but FastAPI was chosen because it reduces boilerplate for validation and documentation, which is useful for an academic micro-API MVP.
+- Status: Accepted.
+- Context: The word "model" can mean both API contract and persistence model.
+- Decision: Keep Pydantic API contracts in `app/schemas/` and SQLAlchemy ORM
+  models in `app/models/`.
+- Rationale: API validation and database mapping evolve for different reasons.
+  Keeping them separate makes changes easier to review and test.
+- Consequences: The API exposes `metadata`, while the SQLAlchemy model uses the
+  internal attribute `metadata_json` because SQLAlchemy reserves `metadata` on
+  declarative models. The database column is still named `metadata`.
 
-## SQLAlchemy Model Metadata Field
+## ADR-005: Use PATCH For Partial Updates
 
-SQLAlchemy reserves the `metadata` attribute on declarative models. The database column is still named `metadata`, but the Python model uses `metadata_json` internally and the API exposes `metadata`.
+- Status: Accepted.
+- Context: The course task requires updating status or priority. The API only
+  needs partial updates.
+- Decision: Implement `PATCH /work-items/{id}` and do not add `PUT`.
+- Rationale: `PATCH` matches the current update behavior because clients can
+  send only the fields they want to change.
+- Consequences: The endpoint set stays smaller, and tests focus on partial
+  update behavior.
 
-## Repository Layer Introduced After MVP Hardening
+## ADR-006: Use Integer IDs For The Local SQLite MVP
 
-The repository layer was introduced after the initial MVP hardening phase to better align the project with the course layered architecture.
+- Status: Accepted.
+- Context: Work items are stored in a single local SQLite database for a course
+  project. The API is not a distributed public integration surface.
+- Decision: Use simple integer primary keys for persisted work items.
+- Rationale: Integer IDs are easy to inspect in examples, curl commands, tests,
+  and short presentations. They are enough for one local database and avoid
+  adding identifier complexity before it is needed.
+- Consequences: UUIDs are not implemented in this release. UUIDs may be
+  reconsidered later if the API needs distributed ID generation, public
+  multi-system integration, or stronger external identifier semantics.
 
-`app/repositories/` isolates SQLAlchemy persistence operations such as create, list, get, update, and delete. The service layer keeps application orchestration and delegates persistence details to the repository.
+## ADR-007: Keep Classification Side-Effect Free
 
-The repository layer is intentionally small and behavior-preserving. It does not change public routes, schemas, response formats, database tables, or runtime behavior.
+- Status: Accepted.
+- Context: The course includes a priority or classification suggestion idea, but
+  the CRUD API must remain predictable.
+- Decision: Implement `POST /work-items/classify` as a side-effect-free
+  suggestion endpoint.
+- Rationale: The endpoint can demonstrate classification behavior without
+  creating, updating, deleting, or reading persisted work items.
+- Consequences: Classification responses are suggestions only. Persisted CRUD
+  behavior remains separate and deterministic.
 
-## PATCH Only For Updates
+## ADR-008: PriorityAdvisor Means Local Deterministic Suggestions
 
-The MVP uses `PATCH /work-items/{id}` for partial updates. `PUT` is intentionally not included.
+- Status: Accepted.
+- Context: `PriorityAdvisor` is course-aligned terminology that could be
+  mistaken for an external AI provider.
+- Decision: In this project, `PriorityAdvisor` means the local deterministic
+  implementation of the course priority/classification suggestion idea.
+- Rationale: The name keeps the course concept visible while the implementation
+  remains simple: keyword rules produce suggested type, priority, tags, and
+  reasons through `app/providers/priority/local_provider.py`.
+- Consequences: `PriorityAdvisor` is not an external AI provider, does not call
+  an LLM, does not require credentials, and does not persist data.
 
-## Separate PriorityAdvisor Flow
+## ADR-009: Defer Runtime AI Provider Integration
 
-`POST /work-items/classify` is side-effect free. It receives input data, delegates to the local PriorityAdvisor, applies deterministic rules, and returns suggestions without reading or writing persisted work items.
+- Status: Accepted.
+- Context: Optional local or external AI providers are future ideas, not
+  requirements for the course MVP.
+- Decision: Do not add runtime provider selection, provider registries,
+  credentials, network calls, model downloads, dependencies, or environment
+  variables in this release.
+- Rationale: Provider integration would add operational and privacy concerns
+  that are not necessary for demonstrating the micro-API.
+- Consequences: Any future provider work must be separately approved, optional,
+  mock-tested, bounded by timeouts, validated against the existing response
+  schema, and backed by the deterministic local fallback.
 
-## Local Deterministic PriorityAdvisor
+## ADR-010: Keep Environment Configuration Minimal
 
-Classification uses keyword rules only. The PriorityAdvisor service delegates to the local deterministic provider in `app/providers/priority/local_provider.py`.
+- Status: Accepted.
+- Context: The app only needs a database URL override for local experimentation.
+- Decision: Read environment variables from the operating system and keep
+  `.env.example` as reference documentation only.
+- Rationale: Avoiding `python-dotenv` keeps dependencies and runtime behavior
+  simple.
+- Consequences: No provider credentials or LLM settings are needed. If
+  `DATABASE_URL` is not set, the app defaults to local SQLite.
 
-The local provider is an internal implementation detail and does not change public API behavior. The MVP does not include external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, or external integrations.
+## ADR-011: Use Automated And Regression Tests
 
-## External AI Runtime Integration Deferred
-
-Runtime integration with external AI providers is out of scope for this MVP. The PriorityAdvisor is intentionally local, deterministic, and usable without credentials or paid API calls.
-
-If external AI integration is explored in a future version, it should be optional and should include credential management, timeout handling, error handling, and a local deterministic fallback. This project does not introduce provider variables or runtime AI behavior.
-
-## Environment Variables
-
-The application reads environment variables from the operating system. `.env.example` is reference documentation only, and the project does not use `python-dotenv`.
+- Status: Accepted.
+- Context: The repository includes tests for API, service, repository,
+  PriorityAdvisor, provider, and safety-check behavior.
+- Decision: Describe the workflow as automated tests, regression tests,
+  test-supported development, and safety-check tests.
+- Rationale: The Git history supports tested development and regression
+  coverage, but it should not claim formal test-first TDD unless the evidence
+  shows a strict red/green/refactor sequence.
+- Consequences: Documentation should avoid overstating TDD and should focus on
+  the actual verification evidence.

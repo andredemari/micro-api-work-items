@@ -1,6 +1,6 @@
 # micro-api-work-items
 
-micro-api-work-items is a small academic REST API for managing generic work items with FastAPI, SQLite, automated tests, and local deterministic PriorityAdvisor rules.
+micro-api-work-items is a small academic REST API for managing generic work items with FastAPI, SQLite, automated tests, and local deterministic PriorityAdvisor suggestion rules.
 
 A work item is a generic task-like record that can represent a task, bug, improvement, research item, operation item, or incident.
 
@@ -29,7 +29,7 @@ The objective is to demonstrate a simple backend MVP with clear scope, local per
 
 ## Academic Context
 
-This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering with Generative AI" at UFG/AKCIT.
+This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering: Automation and Innovation with Generative AI" at UFG/AKCIT.
 
 The course reference problem is a "Micro-API de Tarefas". This project implements the same small API idea using the more generic term "work item", so the API can represent tasks, bugs, improvements, research items, operation items, and incidents without becoming domain-specific.
 
@@ -41,7 +41,7 @@ The course reference problem is a "Micro-API de Tarefas". This project implement
 | Excluir tarefa | Delete a work item | `DELETE /work-items/{id}` |
 | Sugerir prioridade/classificação | Suggest priority and classification | `POST /work-items/classify` |
 
-The course PriorityAdvisor concept is represented by a local deterministic PriorityAdvisor service. Runtime integration with external AI providers is intentionally out of scope for this MVP.
+The course PriorityAdvisor concept is represented by a local deterministic PriorityAdvisor service. In this project, PriorityAdvisor means simple rule-based priority and classification suggestions. It is not an external AI provider, does not call an LLM, and does not persist data. Runtime integration with external AI providers is intentionally out of scope for this MVP.
 
 ## Stack
 
@@ -163,11 +163,12 @@ python -m uvicorn app.main:app --reload
 
 Course architecture terminology maps to this FastAPI project as follows:
 
-- Controller = `app/controllers`
-- Model = `app/schemas` for API contracts and `app/models/work_item_model.py` for persistence
-- Service = `app/services`
-- Repository = `app/repositories`
-- Database/session = `app/db/database.py`
+- Controller = `app/controllers`, which handle HTTP routing and status codes.
+- Model = `app/schemas` for API contracts and `app/models/work_item_model.py` for persistence.
+- Service = `app/services`, which hold application orchestration.
+- Repository = `app/repositories`, which isolate SQLAlchemy persistence access.
+- Provider = `app/providers/priority/local_provider.py`, which contains local deterministic PriorityAdvisor rules.
+- Database/session = `app/db/database.py`, which centralizes SQLite setup and request sessions.
 
 ## Architecture Overview
 
@@ -183,7 +184,7 @@ flowchart TD
     Provider --> Suggestions["Suggestions only"]
 ```
 
-The classification path is side-effect free: `POST /work-items/classify` uses the local PriorityAdvisor service to return suggestions and does not read or write persisted work items. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
+The classification path is side-effect free: `POST /work-items/classify` uses the local PriorityAdvisor service to return suggestions and does not read or write persisted work items. The provider boundary exists for maintainability, not because runtime external providers are part of this MVP. Detailed diagrams are available in [docs/architecture.md](docs/architecture.md).
 
 ## Endpoints
 
@@ -223,7 +224,7 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `52 passed`.
+Current verification result: `59 passed`.
 
 ```bash
 make test
@@ -255,16 +256,17 @@ The test suite covers:
 ## Documentation Map
 
 - [docs/architecture.md](docs/architecture.md): layered architecture, Mermaid diagrams, and course terminology mapping.
-- [docs/decisions.md](docs/decisions.md): technical decisions and deferred scope.
+- [docs/decisions.md](docs/decisions.md): lightweight ADR-style technical decisions and deferred scope.
 - [docs/mvp_scope.md](docs/mvp_scope.md): MVP scope and acceptance checklist.
 - [docs/backlog.md](docs/backlog.md): release-oriented backlog.
 - [docs/api_examples.md](docs/api_examples.md): detailed curl and PowerShell API examples.
-- [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future local LLM setup guidance.
-- [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future external provider planning.
+- [docs/local_llm_setup.md](docs/local_llm_setup.md): optional future-only local LLM setup guidance.
+- [docs/external_provider_plan.md](docs/external_provider_plan.md): optional future-only external provider planning.
 - [docs/security_checks.md](docs/security_checks.md): deterministic safety-check workflow.
 - [docs/security_cleanup_runbook.md](docs/security_cleanup_runbook.md): cleanup guidance for accidental sensitive commits.
 - [docs/information_governance.md](docs/information_governance.md): public-safe information handling guide.
-- [docs/prompts.md](docs/prompts.md): sanitized prompt traceability.
+- [docs/prompts.md](docs/prompts.md): sanitized CO-STAR-style prompt traceability.
+- [docs/refactor_backlog.md](docs/refactor_backlog.md): post-course maintainability roadmap.
 - [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 
 ## Reset Local SQLite State
@@ -342,13 +344,13 @@ It checks tracked and staged files, known incident paths, local artifacts, struc
 - Add richer validation rules for tags and metadata.
 - Add deployment documentation for a non-local environment.
 
-Future versions may expose the API as a reusable backend service for external clients, automation scripts, or agent-based tools through its HTTP/OpenAPI interface.
+Future versions may expose the API as a reusable backend service for external clients or automation scripts through its HTTP/OpenAPI interface.
 
 ## How Generative AI Was Used
 
-Generative AI supported scope planning, architecture discussion, implementation scaffolding, test design, documentation drafting, review, and refinement.
+Codex/GPT 5.4 and 5.5 were used as AI-assisted development support for scope planning, architecture discussion, implementation scaffolding, test design, documentation drafting, review, and refinement.
 
-Human review was decisive for final scope decisions, preserving a local deterministic PriorityAdvisor instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
+Human review controlled final scope decisions, preserving a local deterministic PriorityAdvisor instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
 
 Risk mitigation included avoiding credentials, avoiding paid runtime AI providers, avoiding external data sharing, keeping runtime behavior local and deterministic, and requiring tests and review before acceptance.
 
@@ -369,4 +371,4 @@ git archive --format=zip --output micro-api-work-items.zip HEAD
 
 ## License
 
-This project is licensed under the [Apache License 2.0](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE), SPDX identifier `Apache-2.0`.

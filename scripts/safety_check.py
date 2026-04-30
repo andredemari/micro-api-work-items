@@ -15,6 +15,7 @@ from typing import Iterable, Sequence
 
 DEFAULT_POLICY_PATH = Path(__file__).with_name("safety_policy.json")
 VALID_MODES = ("working-tree", "staged", "history", "release")
+LOCAL_ONLY_IGNORED_PATHS = {"docs/demo.md"}
 
 
 @dataclass(frozen=True)
@@ -88,10 +89,31 @@ def staged_paths(repo_path: Path) -> list[str]:
     return git_paths(repo_path, ["diff", "--cached", "--name-only", "--diff-filter=ACMRT"])
 
 
+def visible_untracked_paths(repo_path: Path) -> list[str]:
+    return git_paths(repo_path, ["ls-files", "--others", "--exclude-standard"])
+
+
+def ignored_untracked_paths(repo_path: Path) -> list[str]:
+    return git_paths(repo_path, ["ls-files", "--others", "--ignored", "--exclude-standard"])
+
+
 def untracked_paths(repo_path: Path) -> list[str]:
-    visible = git_paths(repo_path, ["ls-files", "--others", "--exclude-standard"])
-    ignored = git_paths(repo_path, ["ls-files", "--others", "--ignored", "--exclude-standard"])
+    visible = visible_untracked_paths(repo_path)
+    ignored = ignored_untracked_paths(repo_path)
     return sorted(set(visible + ignored))
+
+
+def untracked_paths_for_sensitive_check(repo_path: Path) -> list[str]:
+    ignored_local_only = {
+        normalize_path(path)
+        for path in ignored_untracked_paths(repo_path)
+        if normalize_path(path) in LOCAL_ONLY_IGNORED_PATHS
+    }
+    return [
+        path
+        for path in untracked_paths(repo_path)
+        if normalize_path(path) not in ignored_local_only
+    ]
 
 
 def match_entry(path: str, entry: dict) -> bool:
@@ -373,7 +395,7 @@ def run_checks(repo_path: Path, mode: str, policy: dict) -> list[Finding]:
     if mode == "working-tree":
         findings.extend(
             check_path_policy(
-                untracked_paths(repo_path),
+                untracked_paths_for_sensitive_check(repo_path),
                 policy["sensitive_paths"],
                 "warn",
                 "suspicious private path exists locally; do not stage or track",
@@ -383,7 +405,7 @@ def run_checks(repo_path: Path, mode: str, policy: dict) -> list[Finding]:
     if mode == "release":
         findings.extend(
             check_path_policy(
-                untracked_paths(repo_path),
+                untracked_paths_for_sensitive_check(repo_path),
                 policy["sensitive_paths"],
                 "fail",
                 "suspicious private path exists locally; remove it before release packaging",

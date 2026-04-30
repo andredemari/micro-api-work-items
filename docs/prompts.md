@@ -1,107 +1,140 @@
-# Prompt Documentation
+# Prompt Traceability
 
-This document records public, generic prompts used to support academic reproducibility and traceability. The entries are sanitized summaries, not raw private chat history.
+This document records sanitized, representative prompts used to support
+academic reproducibility. It is not raw chat history. The prompts are written
+to show the kind of AI-assisted work used across planning, implementation,
+review, documentation, and final hardening.
 
-## CO-STAR Structure
+## Public-Safe Rules
+
+- Do not include private chat history, private paths, credentials, tokens,
+  internal systems, customer data, or private strategy.
+- Keep examples generic and course-oriented.
+- Preserve the current MVP boundary: local, deterministic, public, and simple.
+- Do not introduce runtime external AI providers, local LLM runtime behavior,
+  embeddings, RAG, agents, queues, streaming, frontend, authentication,
+  external integrations, or `python-dotenv`.
+
+## CO-STAR-Like Shape
+
+The prompts below use a compact CO-STAR-like structure:
 
 - Context: background and constraints.
-- Objective: what the prompt asks for.
-- Style: preferred implementation or writing style.
-- Tone: communication style.
-- Audience: intended reader or user.
-- Response format: expected output shape.
+- Objective: what the assistant should produce.
+- Style: implementation or writing expectations.
+- Tone: how the response should read.
+- Audience: who will review or use the result.
+- Response: expected output format.
 
 ## Traceability Log
 
-| Prompt ID | Lifecycle Phase | Technique | Purpose | Main Output | Related Artifact | Related Commit |
-| --- | --- | --- | --- | --- | --- | --- |
-| P-001 | Scope/planning | CO-STAR, scope control | Define the MVP scope, route vocabulary, exclusions, architecture, tests, docs, and commit plan. | MVP plan and acceptance checklist. | `docs/mvp_scope.md`, `docs/architecture.md` | `docs: define mvp scope and architecture plan` |
-| P-002 | `.gitignore`/setup | Reproducibility checklist | Create local setup files, dependency list, ignored artifacts, and basic Makefile commands. | Project configuration. | `.gitignore`, `requirements.txt`, `Makefile` | `chore: initialize project configuration` |
-| P-003 | README | Public-safe documentation | Explain objective, setup, run, test, API usage, limitations, academic context, and license. | Reproducible project overview. | `README.md`, `LICENSE` | `docs: complete README and supporting documentation`; `docs: add academic context and license` |
-| P-004 | Healthcheck | Incremental backend implementation | Add a minimal FastAPI application and service health endpoint. | Health route and app entrypoint. | `app/main.py`, `app/controllers/health_controller.py` | `feat: add FastAPI app and health endpoint` |
-| P-005 | Models/schemas | Contract-first design | Define work item fields, enum values, request schemas, response schemas, and classifier schemas. | Pydantic API contract and SQLAlchemy model. | `app/schemas/work_items.py`, `app/models/work_item_model.py` | `feat: configure SQLite persistence and work item model`; `feat: add work item schemas services and CRUD routes` |
-| P-006 | Service | Layered architecture | Implement CRUD behavior behind route functions without changing HTTP contracts. | Work item service functions. | `app/services/work_items.py` | `feat: add work item schemas services and CRUD routes` |
-| P-007 | Persistence | Local-first data design | Configure SQLite persistence, session handling, test isolation, and ignored local database files. | Database configuration and local data organization. | `app/db/database.py`, `data/.gitkeep`, `.env.example` | `feat: configure SQLite persistence and work item model`; `chore: move local sqlite data into data directory` |
-| P-008 | Classifier/PriorityAdvisor | Deterministic local rules | Represent the course PriorityAdvisor idea with local rule-based classification and no persistence side effects. | PriorityAdvisor service, local provider, and classifier route. | `app/services/priority_advisor.py`, `app/providers/priority/local_provider.py`, `app/controllers/work_item_controller.py` | `feat: add local rule-based classifier`; `docs: map course task API scope to work items`; `refactor: rename classifier to priority advisor`; `refactor: add local priority provider` |
-| P-009 | API routes | REST route implementation | Expose CRUD and classification behavior under `/work-items` using current MVP routes. | API controller module. | `app/controllers/work_item_controller.py` | `feat: add work item schemas services and CRUD routes` |
-| P-010 | Tests | Acceptance criteria, regression checks | Cover health, CRUD, validation errors, missing items, timestamps, metadata, tags, and classifier non-persistence. | Pytest suite. | `tests/` | `test: add health CRUD and classifier coverage` |
-| P-011 | Review | Checklist-based review | Validate scope limits, local-only runtime behavior, public-safe docs, tracked artifacts, and final course guidance. | Review notes and final hardening tasks. | `docs/mvp_scope.md`, `docs/release_checklist.md` | `docs: add backlog demo and release checklist` |
-| P-012 | Final documentation/release | Release readiness | Add backlog, release checklist, prompt traceability, and reproducibility notes. | Final academic submission documentation. | `docs/backlog.md`, `docs/release_checklist.md`, `docs/prompts.md` | `docs: add backlog demo and release checklist`; `docs: expand prompt lifecycle traceability` |
-| P-013 | Local LLM planning | Documentation-first future planning | Document optional local Ollama setup guidance while keeping the current MVP deterministic and provider-free at runtime. | Local LLM setup guidance. | `docs/local_llm_setup.md`, `docs/refactor_backlog.md` | `docs: add local llm setup guidance` |
-| P-014 | External provider planning | Provider-agnostic future planning | Document optional external provider constraints, safety controls, fallback behavior, and mock-only test strategy without implementing runtime integration. | External provider planning guidance. | `docs/external_provider_plan.md`, `docs/refactor_backlog.md` | `docs: add external provider planning guidance` |
-| P-015 | Security governance | Public-safety hardening | Add preventive governance docs and ignore rules for private notes, credentials, local artifacts, and sensitive files. | Security cleanup runbook and information governance guide. | `.gitignore`, `docs/security_cleanup_runbook.md`, `docs/information_governance.md` | `docs: add security governance and cleanup runbook` |
-| P-016 | Safety gate | Deterministic policy checks | Add a non-destructive safety checker for staged, tracked, history, and release checks without using AI, dependencies, or auto-fixes. | Safety checker, tests, and workflow documentation. | `scripts/safety_check.py`, `scripts/safety_policy.json`, `docs/security_checks.md` | `chore: add deterministic safety check`; `test: add safety check coverage`; `docs: document safety check workflow` |
+| ID | Phase | Main artifacts | Verification evidence |
+| --- | --- | --- | --- |
+| P-001 | Scope planning | `docs/mvp_scope.md`, `docs/architecture.md` | MVP scope, out-of-scope list, route plan |
+| P-002 | Project setup | `.gitignore`, `requirements.txt`, `Makefile`, `.env.example` | Local setup commands and ignored artifacts |
+| P-003 | API implementation | `app/main.py`, `app/controllers/`, `app/schemas/`, `app/services/` | Health, CRUD, validation, and error tests |
+| P-004 | Persistence | `app/db/database.py`, `app/models/`, `app/repositories/` | Service and repository tests |
+| P-005 | PriorityAdvisor | `app/services/priority_advisor.py`, `app/providers/priority/local_provider.py` | Deterministic classifier and provider tests |
+| P-006 | Documentation | `README.md`, `docs/api_examples.md`, `docs/decisions.md` | Reproducible setup, examples, decisions |
+| P-007 | Review and safety | `scripts/safety_check.py`, `scripts/safety_policy.json`, `tests/test_safety_check.py` | Safety-check tests and release gate |
+| P-008 | Final course readiness | `docs/course_submission_traceability.md`, `docs/release_checklist.md` | Requirement-to-artifact mapping |
 
-## Compact Sanitized Prompt Examples
+## Representative Sanitized Prompts
 
-### P-001 Scope/Planning
+### P-001 Scope Planning
 
-Plan a small academic FastAPI MVP for generic work items. Include scope, out-of-scope items, architecture, API routes, persistence, tests, documentation, and Conventional Commit sequence.
+- Context: A postgraduate course requires a small task-oriented micro-API.
+  The repository must remain public, academic, local, deterministic, and easy
+  to run.
+- Objective: Plan a FastAPI MVP for generic work items, including endpoints,
+  data fields, architecture, tests, documentation, and explicit exclusions.
+- Style: Keep the plan incremental and implementation-ready.
+- Tone: Direct and reviewer-friendly.
+- Audience: Course reviewer and future maintainer.
+- Response: MVP scope, acceptance checklist, file layout, and commit sequence.
 
-### P-002 `.gitignore`/Setup
+### P-002 Project Setup
 
-Create basic local project configuration for a Python FastAPI MVP. Include dependency list, ignored Python/cache/database artifacts, and simple install/run/test commands.
+- Context: The project should run locally without external services or paid
+  provider credentials.
+- Objective: Define Python dependencies, ignored local artifacts, environment
+  reference values, and basic Makefile commands.
+- Style: Prefer simple commands and Windows-friendly guidance.
+- Tone: Practical.
+- Audience: Student, reviewer, and anyone reproducing the project.
+- Response: `.gitignore`, `requirements.txt`, `.env.example`, and Makefile
+  targets for install, run, test, and safety checks.
 
-### P-003 README
+### P-003 API Implementation
 
-Write public-safe README content for an academic micro-API, including objective, setup, run, tests, API examples, limitations, AI-assisted development notes, and license.
+- Context: The API needs health, CRUD, and classification endpoints under the
+  work-item vocabulary.
+- Objective: Implement FastAPI routes, Pydantic contracts, service functions,
+  and HTTP error handling without expanding scope.
+- Style: Keep controllers thin and move application behavior into services.
+- Tone: Precise and conservative.
+- Audience: Maintainer reviewing the code.
+- Response: Route handlers, schemas, services, and tests for success and error
+  cases.
 
-### P-004 Healthcheck
+### P-004 Persistence
 
-Add a minimal FastAPI application with a health endpoint that can be tested automatically and used as the first runtime verification.
+- Context: Persistence should be local and inspectable for the MVP.
+- Objective: Configure SQLite through SQLAlchemy, isolate database access, and
+  make tests independent from the runtime database file.
+- Style: Use a small repository layer rather than spreading queries through
+  route functions.
+- Tone: Engineering-focused.
+- Audience: Course reviewer and future maintainer.
+- Response: Database setup, SQLAlchemy model, repository functions, and
+  repository/service regression tests.
 
-### P-005 Models/Schemas
+### P-005 PriorityAdvisor
 
-Define Pydantic v2 schemas and SQLAlchemy models for a generic work item with enum-backed fields, tags, optional metadata, and timestamps.
+- Context: The course includes the idea of suggesting priority or
+  classification, but the current release must not call an external AI
+  provider.
+- Objective: Represent `PriorityAdvisor` as local deterministic suggestion
+  logic that returns type, priority, tags, and reasons.
+- Style: Keep the endpoint side-effect free and keep persisted CRUD separate.
+- Tone: Clear about boundaries.
+- Audience: Reviewer checking whether AI runtime scope was added.
+- Response: Local provider rules, PriorityAdvisor service, classification
+  endpoint, and tests proving deterministic non-persistence.
 
-### P-006 Service
+### P-006 Documentation
 
-Implement work item CRUD service functions with clear type hints while keeping HTTP route handling separate from persistence operations.
+- Context: The repository is intended for public GitHub publication and course
+  submission.
+- Objective: Explain objective, setup, run commands, endpoints, examples,
+  limitations, AI assistance, design decisions, and packaging guidance.
+- Style: Keep README concise and move detailed evidence into supporting docs.
+- Tone: Public-safe and course-oriented.
+- Audience: Course reviewer and public reader.
+- Response: README updates, API examples, decision log, traceability document,
+  and release checklist.
 
-### P-007 Persistence
+### P-007 Review And Safety
 
-Configure local SQLite persistence for the MVP, keep runtime database files ignored, and isolate tests from runtime data.
+- Context: Public publication requires checking tracked files, ignored local
+  artifacts, provider scope, and accidental sensitive content.
+- Objective: Add deterministic repository checks and tests without deleting
+  files, rewriting history, staging files, or using AI inference.
+- Style: Prefer explicit policy data, redacted findings, and temporary Git
+  repositories in tests.
+- Tone: Strict and factual.
+- Audience: Maintainer preparing a release.
+- Response: Safety checker, policy data, safety-check tests, and documentation
+  for pre-publication use.
 
-### P-008 Classifier/PriorityAdvisor
+### P-008 Final Course Readiness
 
-Represent the course PriorityAdvisor concept with a local deterministic advisor that returns classification suggestions without persisting data or calling external AI providers.
-
-### P-009 API Routes
-
-Expose work item CRUD routes and the classifier route under `/work-items`, using `PATCH` for partial updates and preserving the MVP route contract.
-
-### P-010 Tests
-
-Create automated tests for health, CRUD, validation errors, missing items, tags, metadata, timestamps, deterministic classification, and classifier non-persistence.
-
-### P-011 Review
-
-Review the repository against MVP scope, public-safety constraints, test coverage, documentation completeness, tracked artifacts, and course submission expectations.
-
-### P-012 Final Documentation/Release
-
-Prepare final academic submission documentation with backlog, release checklist, prompt traceability, reproducibility notes, and verification commands.
-
-### P-013 Local LLM Planning
-
-Document optional local LLM setup with Ollama for future experimentation, keeping current runtime behavior unchanged and avoiding provider code, credentials, dependencies, or environment variables.
-
-### P-014 External Provider Planning
-
-Document future optional external provider integration in provider-agnostic terms, requiring credential safety, timeouts, schema validation, local fallback, privacy controls, and mock-only tests before any implementation.
-
-### P-015 Security Governance
-
-Add public-safe governance guidance for accidental sensitive commits, ignored private working areas, information classification, and pre-publication review without changing runtime behavior.
-
-### P-016 Safety Gate
-
-Implement a deterministic, non-destructive repository safety gate with explicit policy checks, redacted findings, isolated tests, optional hooks, and documentation for manual and release use.
-
-## Privacy And Scope Rules
-
-- Do not include raw private chat history.
-- Do not include private business context, private paths, credentials, tokens, internal systems, or domain-specific examples.
-- Keep prompts generic and reproducible.
-- Keep runtime behavior local-first and deterministic.
-- Do not introduce external AI providers, LLM APIs, embeddings, RAG, agents, queues, streaming, frontend, authentication, external integrations, or `python-dotenv`.
+- Context: Before tagging, the project needs a clean course-submission story
+  and evidence that the MVP remained within scope.
+- Objective: Map course expectations to repository artifacts, clarify final
+  limitations, and verify public/private boundaries.
+- Style: Use a checklist and concise artifact mapping.
+- Tone: Evidence-based.
+- Audience: Course reviewer.
+- Response: Course traceability, release checklist updates, and a short
+  pre-publication review summary.

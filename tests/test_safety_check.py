@@ -75,6 +75,41 @@ def test_release_mode_fails_on_untracked_private_path(tmp_path: Path) -> None:
     assert "PATH-PRIVATE-DOTDIR" in failure_ids(findings)
 
 
+def test_ignored_untracked_demo_note_is_allowed_in_release_mode(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+    write_file(repo_path, ".gitignore", "docs/demo.md\n")
+    write_file(repo_path, "docs/demo.md", "public-safe local presentation notes\n")
+
+    findings = run_checks(repo_path, "release", load_policy())
+
+    assert "PATH-KNOWN-INCIDENT" not in failure_ids(findings)
+    assert not failure_ids(findings)
+
+
+def test_staged_demo_note_is_blocked_even_when_ignored(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+    write_file(repo_path, ".gitignore", "docs/demo.md\n")
+    write_file(repo_path, "docs/demo.md", "local-only presentation notes\n")
+    run_git(repo_path, "add", "-f", "docs/demo.md")
+
+    findings = run_checks(repo_path, "staged", load_policy())
+
+    assert "PATH-KNOWN-INCIDENT" in failure_ids(findings)
+
+
+def test_tracked_demo_note_is_blocked(tmp_path: Path) -> None:
+    repo_path = init_repo(tmp_path)
+    write_file(repo_path, ".gitignore", "docs/demo.md\n")
+    write_file(repo_path, "docs/demo.md", "local-only presentation notes\n")
+    run_git(repo_path, "add", "-f", "docs/demo.md")
+    run_git(repo_path, "commit", "-m", "docs: add local presentation notes")
+
+    findings = run_checks(repo_path, "release", load_policy())
+
+    assert "PATH-KNOWN-INCIDENT" in failure_ids(findings)
+    assert "HISTORY-KNOWN-INCIDENT" in failure_ids(findings)
+
+
 def test_known_incident_path_in_history_fails_in_temp_repo(tmp_path: Path) -> None:
     repo_path = init_repo(tmp_path)
     write_file(repo_path, "docs/demo.md", "private content\n")

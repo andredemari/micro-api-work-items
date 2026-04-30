@@ -31,10 +31,11 @@ Use this checklist before submitting the academic MVP.
 - [ ] No `.db`, `.sqlite`, `.sqlite3`, `.env`, `__pycache__`, `.pytest_cache`, or local artifact is tracked by Git.
 - [ ] No private working folders such as `.private/`, `private/`, or `docs/priv/` are tracked by Git.
 - [ ] No private strategy files, local notes, credentials, customer data, or sensitive personal data are tracked by Git.
+- [ ] Local presentation notes, if any, remain ignored and untracked.
 - [ ] No ignored private files were force-added with `git add -f`.
 - [ ] The deterministic safety checker was run before publication or packaging.
 - [ ] Conventional Commit history is present.
-- [ ] Apache License 2.0 is present.
+- [ ] Apache License 2.0 / Apache-2.0 is present.
 
 ## Out Of Scope Confirmation
 

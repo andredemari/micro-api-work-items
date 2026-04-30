@@ -1,400 +1,127 @@
 # Refactor Backlog
 
-## Purpose
+This backlog is public, post-course maintenance guidance for
+`micro-api-work-items`. It is not required to understand or run the current
+MVP, and it does not expand the release scope.
 
-This document captures an incremental, public-safe refactor roadmap for `micro-api-work-items`.
+The current submission remains:
 
-The project is already a working academic FastAPI MVP. The goal of this roadmap is not to expand product scope immediately. The goal is to align the internal architecture more closely with the course layered architecture while preserving the current public API and deterministic local runtime behavior.
+- public and educational;
+- local SQLite only;
+- deterministic and provider-free at runtime;
+- focused on `/health`, `/work-items`, and `/work-items/classify`;
+- covered by automated tests and the deterministic safety checker.
 
-## Current Architecture Summary
+Speculative product, platform, governance, or automation ideas should move to
+separate planning after the course submission. They are not part of this public
+MVP release.
 
-The current application is organized as a small FastAPI backend:
+## Current Architecture
 
-- `app/controllers/` contains FastAPI route handlers.
-- `app/schemas/` contains Pydantic request and response schemas.
-- `app/models/work_item_model.py` contains the SQLAlchemy persistence model.
-- `app/db/database.py` contains database engine, session, and schema initialization.
-- `app/services/work_items.py` contains CRUD service logic.
-- `app/services/priority_advisor.py` orchestrates PriorityAdvisor suggestions.
-- `app/providers/priority/local_provider.py` contains deterministic local PriorityAdvisor rules.
-- `tests/` contains API, service, repository, provider, and PriorityAdvisor tests.
+| Layer | Location | Purpose |
+| --- | --- | --- |
+| Controllers | `app/controllers/` | FastAPI route handlers and HTTP concerns. |
+| Schemas | `app/schemas/` | Pydantic request and response contracts. |
+| Services | `app/services/` | Application orchestration for CRUD and suggestions. |
+| Repositories | `app/repositories/` | SQLAlchemy persistence access. |
+| Models | `app/models/` | SQLAlchemy database model. |
+| Database | `app/db/database.py` | Engine, session, schema initialization, and SQLite directory handling. |
+| Providers | `app/providers/priority/local_provider.py` | Local deterministic PriorityAdvisor rules. |
+| Tests | `tests/` | API, service, repository, provider, PriorityAdvisor, and safety-check tests. |
 
-The current public API must remain unchanged:
+The public API must remain unchanged unless a future task explicitly approves
+an API change:
 
 | Method | Route | Purpose |
 | --- | --- | --- |
-| `GET` | `/health` | Health check |
-| `POST` | `/work-items` | Create work item |
-| `GET` | `/work-items` | List work items |
-| `GET` | `/work-items/{id}` | Retrieve one work item |
-| `PATCH` | `/work-items/{id}` | Partially update one work item |
-| `DELETE` | `/work-items/{id}` | Delete one work item |
-| `POST` | `/work-items/classify` | Suggest type, priority, and tags without persistence |
+| `GET` | `/health` | Health check. |
+| `POST` | `/work-items` | Create a work item. |
+| `GET` | `/work-items` | List work items. |
+| `GET` | `/work-items/{id}` | Retrieve one work item. |
+| `PATCH` | `/work-items/{id}` | Partially update one work item. |
+| `DELETE` | `/work-items/{id}` | Delete one work item. |
+| `POST` | `/work-items/classify` | Suggest type, priority, and tags without persistence. |
 
-## Target Architecture
+## Completed Refactor Work
 
-The target direction is a layered architecture aligned with the course vocabulary:
-
-```text
-Client
-  -> Controller/API
-    -> Pydantic schemas
-    -> Service
-      -> Repository
-        -> SQLAlchemy model
-        -> Database/session
-      -> PriorityAdvisor
-        -> Local deterministic provider
-        -> Future optional providers
-```
-
-Near-term target folder direction:
-
-```text
-app/
-  main.py
-  controllers/
-    health_controller.py
-    work_item_controller.py
-  db/
-    database.py
-  models/
-    work_item_model.py
-  schemas/
-    work_items.py
-  repositories/
-    work_item_repository.py
-  services/
-    work_item_service.py
-    priority_advisor.py
-  providers/
-    priority/
-      local_provider.py
-```
-
-Future-only optional provider direction:
-
-```text
-app/
-  providers/
-    priority/
-      ollama_provider.py
-      external_provider.py
-```
-
-The future-only provider files above must not be created during the immediate refactor. They are planning placeholders for later, separately approved work. The near-term provider architecture should focus on local deterministic behavior.
-
-This is a roadmap, not a single implementation task. Each layer should be introduced in a small, behavior-preserving commit.
-
-## Pydantic Schemas Vs SQLAlchemy Models
-
-The project must preserve a clear distinction between API contracts and persistence models:
-
-- `app/schemas/` contains Pydantic models used for request validation, response serialization, and OpenAPI documentation.
-- `app/models/` should contain SQLAlchemy ORM models used to map Python classes to database tables.
-- Pydantic schemas should not become database models.
-- SQLAlchemy models should not become public API contracts.
-
-This distinction is important because the course may use the term "model" broadly, while this FastAPI project benefits from separating API schemas from database models.
-
-## Current-To-Target Folder Mapping
-
-| Current location | Target location | Purpose | Migration note |
+| ID | Item | Status | Evidence |
 | --- | --- | --- | --- |
-| `app/controllers/health_controller.py` | `app/controllers/health_controller.py` | Health endpoint controller | Preserve `GET /health`. |
-| `app/controllers/work_item_controller.py` | `app/controllers/work_item_controller.py` | Work item API controller | Preserve all `/work-items` routes. |
-| `app/models/work_item_model.py` | `app/models/work_item_model.py` | SQLAlchemy persistence model | Preserve table and column behavior. |
-| `app/db/database.py` | `app/db/database.py` | Engine/session/schema setup | Keep location unless a later refactor requires otherwise. |
-| `app/schemas/work_items.py` | `app/schemas/work_items.py` | Pydantic API contracts | Keep location and public schema behavior. |
-| `app/services/work_items.py` | `app/services/work_item_service.py` | Work item service orchestration | Rename only when low risk. |
-| none | `app/repositories/work_item_repository.py` | Persistence access isolation | Add without changing API behavior. |
-| `app/services/priority_advisor.py` | `app/services/priority_advisor.py` | PriorityAdvisor orchestration | Preserve current classifier output. |
-| none | `app/providers/priority/local_provider.py` | Deterministic local fallback | Default provider must remain local. |
-| none | future-only optional provider modules | Optional LLM provider adapters | Do not create until separately approved. |
-
-## Refactor Roadmap
-
-### Phase 0: Planning Baseline
-
-Create this roadmap and keep it public-safe.
-
-Acceptance criteria:
-
-- `docs/refactor_backlog.md` exists.
-- The roadmap preserves the current public API.
-- The roadmap clearly separates near-term refactors from future features.
-- No application behavior changes.
-
-### Phase 1: Controller And Model Naming Alignment
-
-Align folders with course terminology while preserving behavior.
-
-Planned changes:
-
-- Move API route modules toward `app/controllers/`.
-- Move SQLAlchemy model toward `app/models/work_item_model.py`.
-- Keep Pydantic schemas in `app/schemas/`.
-- Update imports only.
-- Keep all routes, status codes, response shapes, and tests unchanged.
-
-Phase 1 describes the conceptual course-aligned structure. It does not require all folder moves to happen before lower-risk coupling reductions such as repository extraction.
-
-### Phase 2: Repository Layer
-
-Introduce a repository layer to isolate persistence operations.
-
-Repository responsibilities:
-
-- create a work item;
-- list work items;
-- get a work item by id;
-- update a work item;
-- delete a work item.
-
-The service layer should orchestrate application behavior and call the repository instead of directly owning SQLAlchemy query details.
-
-### Phase 3: PriorityAdvisor Local Refactor
-
-Refactor the current classifier concept into a course-aligned `PriorityAdvisor`.
-
-Requirements:
-
-- preserve `POST /work-items/classify`;
-- preserve the current response shape unless separately approved;
-- preserve local deterministic behavior;
-- keep classifier/advisor flow separate from persisted CRUD flow;
-- do not make LLM calls.
-
-### Phase 4: Local Provider Interface
-
-Prepare a provider architecture without requiring external services.
-
-Requirements:
-
-- define a small provider contract for suggestions;
-- keep a deterministic local provider as the default;
-- optionally add a mock provider for tests;
-- do not add network calls;
-- do not require credentials.
-
-Near-term provider work should stop at local deterministic behavior. Ollama and external LLM providers are future-only.
-
-### Phase 5: Optional Future LLM Providers
-
-Plan optional providers only after the local provider interface is stable.
-
-Potential future providers:
-
-- local Ollama provider;
-- optional external provider.
-
-Constraints:
-
-- LLM providers must be optional.
-- Missing provider configuration must not break CRUD.
-- Local deterministic fallback must remain available.
-- Provider output must be validated before use.
-- No credentials may be hardcoded or committed.
-- No model files may be stored in the repository.
-- Any future external provider must be approved in a separate implementation plan.
-
-The optional local Ollama setup plan is documented in `docs/local_llm_setup.md`. That document explains how an interested user can run a local LLM outside this repository and how a future Ollama provider could be planned without making LLM usage required.
-
-The optional external provider plan is documented in `docs/external_provider_plan.md`. That document keeps external providers future-only, provider-agnostic, and dependent on separate approval before any implementation.
-
-### Phase 6: Future Capture And Suggestion Workflow
-
-Plan future human-in-the-loop workflows without implementing them now.
-
-Conceptual flow:
-
-1. Capture raw input.
-2. Generate a suggested work item or suggested update.
-3. Store the suggestion as pending review.
-4. Human reviewer approves, edits, or rejects.
-5. Only approved suggestions create or update persisted work items.
-
-### Phase 7: Future Human Review And Audit Trail
-
-Plan review records for suggested changes.
-
-Potential concepts:
-
-- reviewer action;
-- approval/edit/rejection;
-- reason;
-- timestamp;
-- suggestion version.
-
-Do not implement database tables until separately approved.
-
-### Phase 8: Future Telemetry
-
-Plan operational traceability for future advisor/provider runs.
-
-Potential event types:
-
-- `priority_advisor.started`;
-- `priority_advisor.completed`;
-- `priority_advisor.failed`;
-- `suggestion.created`;
-- `suggestion.approved`;
-- `suggestion.rejected`;
-- `work_item.status_changed`.
-
-Telemetry should remain generic and must not record credentials or private data.
-
-### Phase 9: Future Controlled Autonomy
-
-Controlled autonomy must remain future-only.
-
-Possible levels:
-
-| Level | Meaning |
-| --- | --- |
-| 0 | AI disabled |
-| 1 | AI suggests only |
-| 2 | AI drafts and human approves |
-| 3 | AI applies low-risk changes and human audits later |
-| 4 | AI acts within bounded routines |
-
-Near-term planning should stay at Level 1 or Level 2.
-
-## Backlog
-
-| ID | Phase | Item | Rationale | Likely files affected | Tests | Acceptance criteria | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| REF-000 | 0 | Create refactor roadmap | Establish public-safe incremental plan | `docs/refactor_backlog.md` | Not required | Roadmap exists; no app behavior changes | Done |
-| REF-001 | 1 | Move route modules to controllers | Align with course Controller terminology | `app/controllers/*`, `app/main.py`, imports | Full suite | Public routes unchanged; tests pass | Done |
-| REF-002 | 1 | Move SQLAlchemy model to models layer | Separate database models from database setup | `app/models/work_item_model.py`, imports | Full suite | Table behavior unchanged; tests pass | Done |
-| REF-003 | 2 | Add work item repository | Isolate SQLAlchemy persistence operations | `app/repositories/work_item_repository.py`, service imports | Repository/service/API tests | Service uses repository; API unchanged | Done |
-| REF-004 | 2 | Add repository-focused tests | Improve diagnosis of persistence behavior | `tests/` | Full suite | Repository CRUD behavior covered | Done |
-| REF-005 | 3 | Refactor classifier to PriorityAdvisor | Align with course PriorityAdvisor concept | `app/services/priority_advisor.py`, imports | Classifier/advisor tests | Current suggestions preserved | Done |
-| REF-006 | 4 | Add local provider interface | Prepare optional providers safely | `app/providers/priority/local_provider.py` | Provider tests | Local deterministic provider remains default | Done |
-| REF-007 | 5 | Plan optional Ollama provider | Support local experimentation later | `docs/local_llm_setup.md` | Not required | Optional local LLM setup and future Ollama provider plan documented; no provider code implemented | Done |
-| REF-008 | 5 | Plan optional external provider | Support explicitly configured provider later | `docs/external_provider_plan.md` | Not required | Provider-agnostic external provider plan documented; no provider code implemented | Done |
-| REF-009 | 6 | Plan capture concept | Support future raw-input workflow | docs first | Not required | Capture design documented only | Future |
-| REF-010 | 6 | Plan pending suggestions | Support human review before applying changes | docs first | Not required | Suggestion lifecycle documented only | Future |
-| REF-011 | 7 | Plan human review records | Keep human approval explicit | docs first | Not required | Review model described, not implemented | Future |
-| REF-012 | 8 | Plan telemetry taxonomy | Improve future traceability | docs first | Not required | Generic event list documented | Future |
-| REF-013 | 9 | Plan controlled autonomy policy | Prevent unsafe expansion | docs first | Not required | Autonomy limits documented | Future |
-| REF-014 | 9 | Plan agent-ready context | Define future agent rules and policies | docs first | Not required | `.agent/` purpose documented only | Future |
-
-## Explicit Out Of Scope
-
-Do not implement as part of this planning document:
-
-- new public endpoints;
-- route changes;
-- response format changes;
-- schema behavior changes;
-- new database tables;
-- LLM providers;
-- autonomous agents;
-- script execution;
-- sandbox orchestration;
-- multi-tenant runtime isolation;
-- web browsing;
-- external integrations;
-- authentication;
-- frontend;
-- Docker;
-- CI/CD;
-- `.agent/` folder creation;
-- tag or release creation.
-
-## Future Runtime Security Constraints
-
-If script execution, tool execution, or autonomous agent runtimes are ever considered, they must be planned as a separate execution subsystem.
-
-Security constraints:
-
-- Do not execute untrusted code in the API process.
-- Treat agent/tool/script workloads as untrusted.
-- Use isolated workers or sandboxes before any execution capability exists.
-- Apply CPU, memory, process, filesystem, and network limits.
-- Deny network access by default unless explicitly required.
-- Never mount broad host paths into execution environments.
-- Never expose secrets broadly to runtime workers.
-- Record telemetry and audit events for every execution.
-- Keep workspaces ephemeral.
-- Keep execution outputs size-limited.
-- Require human review for risky actions.
-
-These constraints are future planning notes only. The current MVP must not implement script execution or sandbox orchestration.
-
-## Future Agent-Ready Context
-
-A future `.agent/` folder may be planned later to document agent-facing rules, prompts, policies, safe operating boundaries, and expected agent behavior.
-
-The `.agent/` folder must not be created in this planning step. Any future agent-ready context should remain public-safe, generic, and separate from private strategy, credentials, internal systems, or domain-specific operational details.
-
-## Documentation Update Strategy
-
-Update documentation with each refactor phase:
-
-- `README.md`: only if setup, architecture summary, or docs map changes.
-- `docs/architecture.md`: update diagrams and course terminology mapping after folder/layer changes.
-- `docs/decisions.md`: record new architectural decisions such as repository introduction.
-- `docs/mvp_scope.md`: keep public API and MVP boundaries clear.
-- `docs/prompts.md`: add sanitized prompt traceability for each significant planning or refactor step.
-- `docs/api_examples.md`: update only if public API examples change, which is not expected for behavior-preserving refactors.
+| REF-001 | Align route modules with controller terminology | Done | `app/controllers/`, `app/main.py` |
+| REF-002 | Move persistence model into models layer | Done | `app/models/work_item_model.py` |
+| REF-003 | Add repository layer | Done | `app/repositories/work_item_repository.py` |
+| REF-004 | Add repository-focused tests | Done | `tests/test_work_item_repository.py` |
+| REF-005 | Rename classifier concept to PriorityAdvisor | Done | `app/services/priority_advisor.py` |
+| REF-006 | Add local deterministic provider boundary | Done | `app/providers/priority/local_provider.py` |
+| REF-007 | Document optional local-provider experimentation as future-only | Done | `docs/local_llm_setup.md` |
+| REF-008 | Document optional external-provider planning as future-only | Done | `docs/external_provider_plan.md` |
+
+## Post-Course Maintenance Backlog
+
+| ID | Item | Why it may help later | Stop rule |
+| --- | --- | --- | --- |
+| REF-009 | Rename `app/services/work_items.py` to `work_item_service.py` | Improves naming consistency with singular domain language. | Do only if imports remain behavior-preserving and tests pass. |
+| REF-010 | Add pagination or simple filters | Makes list behavior more realistic for larger local data sets. | Do not add until current MVP is submitted and API change is approved. |
+| REF-011 | Add Alembic migrations | Helps if schema evolution becomes necessary. | Do not add for the current SQLite course MVP. |
+| REF-012 | Improve tag and metadata validation | Tightens input quality after basic CRUD is accepted. | Keep response shape stable unless separately approved. |
+| REF-013 | Revisit identifier strategy | UUIDs may be useful for distributed or public multi-system integration. | Do not replace integer IDs unless external identifier semantics are required. |
+| REF-014 | Revisit optional provider experimentation | Could support future comparison with deterministic suggestions. | Keep current runtime local and deterministic; require separate approval before code, dependencies, credentials, or network calls. |
+
+## Provider Boundary
+
+The provider boundary currently exists only to keep deterministic
+PriorityAdvisor rules separate from service orchestration. It should not be
+read as evidence that external providers are part of the current release.
+
+Current rule:
+
+```text
+PriorityAdvisor service -> local deterministic provider -> suggestions only
+```
+
+Any future provider experiment must preserve these constraints:
+
+- optional behavior only;
+- no CRUD dependency on provider availability;
+- no committed credentials;
+- no real network calls in tests;
+- schema validation before using provider output;
+- deterministic local fallback remains available.
 
 ## Test Strategy
 
-Run the full suite after every refactor phase:
+Use automated regression tests, not a claim of formal test-first TDD, as the
+quality evidence for this repository.
+
+Expected checks after any refactor:
 
 ```powershell
 & 'C:\Users\<your-user>\anaconda3\python.exe' -m pytest -q
+& 'C:\Users\<your-user>\anaconda3\python.exe' scripts\safety_check.py
 ```
 
 Minimum expectations:
 
-- API tests continue to prove public routes and response behavior.
-- Service tests continue to prove business behavior.
-- Repository tests should be added when the repository layer is introduced.
-- PriorityAdvisor tests must preserve current deterministic classifier behavior.
-- Provider tests must use mocks or local deterministic logic only unless a future provider implementation is separately approved.
-- No real external network calls should be required for tests.
+- API tests preserve public routes, status codes, and response shape.
+- Service tests preserve application behavior.
+- Repository tests preserve persistence behavior.
+- PriorityAdvisor and provider tests preserve deterministic suggestions.
+- Safety-check tests preserve public/private boundary behavior.
+- No dependency, schema, route, or database change is bundled into a docs-only
+  or naming-only refactor.
 
-## Risks And Mitigations
+## Documentation Update Rules
 
-| Risk | Mitigation |
-| --- | --- |
-| Public API changes accidentally | Keep existing API tests unchanged and passing. |
-| Import churn during folder moves | Move one layer at a time and run tests after each commit. |
-| Pydantic schemas and SQLAlchemy models becoming confused | Keep `app/schemas/` and `app/models/` separate. |
-| Repository layer adding noise | Keep repository small and focused on persistence operations. |
-| PriorityAdvisor refactor changing classifier output | Preserve current classifier tests and add advisor-level regression tests. |
-| Optional providers making runtime brittle | Keep local deterministic fallback mandatory and providers optional. |
-| Credentials leaking into public repo | Do not hardcode secrets; do not commit local env files. |
-| Scope expanding into agents or automation | Keep future concepts documented but unimplemented until separately approved. |
-| Runtime execution creating security exposure | Do not implement script execution in the MVP; require a separate security design first. |
+- Update `README.md` only when setup, scope, verification, or documentation map
+  details change.
+- Update `docs/architecture.md` when layer boundaries or diagrams change.
+- Update `docs/decisions.md` when a meaningful technical decision changes.
+- Update `docs/mvp_scope.md` only when MVP boundaries change.
+- Update `docs/api_examples.md` only when public request or response examples
+  change.
 
-## Suggested Conventional Commit Sequence
+## Current Stop Point
 
-```text
-docs: add refactor backlog roadmap
-refactor: add repository layer for work items
-test: add repository coverage
-refactor: align controllers with course architecture
-refactor: move persistence model into models layer
-refactor: rename classifier to priority advisor
-refactor: add local priority provider interface
-docs: update architecture after refactor phases
-docs: add local llm setup guidance
-```
-
-Each implementation commit should be small and behavior-preserving unless a future change is explicitly approved.
-
-## Recommended Next Planning Step
-
-The completed refactor tasks now cover REF-001 through REF-008. The next roadmap item is REF-009:
-
-```text
-REF-009: Plan capture concept
-```
-
-REF-009 should be planned separately before any implementation. It should remain documentation-first and future-only unless explicitly approved. Any later capture workflow must preserve the current public API until a separate API change is approved.
-
-This REF-008 documentation task does not implement external providers, runtime provider selection, credentials, environment variables, dependencies, or provider registry behavior.
+For the course submission, stop here: the completed refactors already support a
+clean layered MVP. Further work should wait until after public tagging and
+course submission unless it is required to fix a blocker found during release
+verification.
