@@ -110,6 +110,8 @@ The working tree was clean before creating this final evidence patch.
 Recent Conventional Commit history from `git log --oneline --max-count=15`:
 
 ```text
+24ee662 docs: simplify public refactor backlog wording
+0198424 docs: add final course delivery evidence
 b48308d docs: improve pre-tag documentation clarity
 6dcf08f docs: switch project license to Apache 2.0
 813ea46 docs: refine course submission traceability
@@ -123,8 +125,6 @@ d24ca6c test: cover safety check hardening
 948644e chore: add deterministic safety check
 bda5d1c docs: add security governance and cleanup runbook
 6e582ad docs: remove private demo references
-6044671 merge: integrate external provider planning
-2322d3e docs: add external provider planning guidance
 ```
 
 ## 6. Pytest Command And Result
@@ -250,6 +250,7 @@ SQLite databases, local environment files, or generated archives.
 
 ## 15. Local Demo Note
 
-`docs/demo.md` is intentionally ignored and local-only. It may exist on the
-maintainer's machine as presentation material for a short demo, but it is not
-tracked, staged, committed, or part of the public GitHub/course submission.
+The local presentation note configured in `.gitignore` is intentionally
+ignored and local-only. It may exist on the maintainer's machine as material
+for a short demo, but it is not tracked, staged, committed, or part of the
+public GitHub/course submission.

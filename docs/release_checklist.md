@@ -38,7 +38,7 @@ the final verification commands run before creating
 - [x] No `.db`, `.sqlite`, `.sqlite3`, `.env`, `__pycache__`, `.pytest_cache`, or local artifact is tracked by Git.
 - [x] No private working folders such as `.private/`, `private/`, or `docs/priv/` are tracked by Git.
 - [x] No private strategy files, local notes, credentials, customer data, or sensitive personal data are tracked by Git.
-- [x] Local presentation notes remain ignored and untracked; `docs/demo.md` is not part of the public tracked submission.
+- [x] Local presentation notes remain ignored and untracked; the ignored local presentation note is not part of the public tracked submission.
 - [x] No ignored private files were force-added with `git add -f`.
 - [x] The deterministic safety checker was run before publication or packaging.
 - [x] Apache License 2.0 / Apache-2.0 is present.
