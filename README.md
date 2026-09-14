@@ -12,6 +12,7 @@ A work item is a generic task-like record that can represent a task, bug, improv
 - [Setup Details](#setup-details)
 - [Project Structure](#project-structure)
 - [Architecture Overview](#architecture-overview)
+- [Documentation Discovery](docs/architecture.md#documentation-discovery-diagrams-as-code)
 - [Endpoints](#endpoints)
 - [API Example Flow](#api-example-flow)
 - [Tests](#tests)
