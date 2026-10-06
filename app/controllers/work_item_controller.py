@@ -6,7 +6,9 @@ from app.schemas.work_items import (
     WorkItemClassification,
     WorkItemClassificationInput,
     WorkItemCreate,
+    WorkItemPriority,
     WorkItemRead,
+    WorkItemStatus,
     WorkItemUpdate,
 )
 from app.services.priority_advisor import advise_work_item as classify_work_item_service
@@ -24,8 +26,12 @@ def create_work_item(
 
 
 @router.get("", response_model=list[WorkItemRead])
-def list_work_items(db: Session = Depends(get_db)) -> list[WorkItemRead]:
-    return work_item_service.list_work_items(db)
+def list_work_items(
+    db: Session = Depends(get_db),
+    status: WorkItemStatus | None = None,
+    priority: WorkItemPriority | None = None,
+) -> list[WorkItemRead]:
+    return work_item_service.list_work_items(db, status=status, priority=priority)
 
 
 @router.post("/classify", response_model=WorkItemClassification)

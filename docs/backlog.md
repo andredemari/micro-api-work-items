@@ -8,7 +8,7 @@ This backlog keeps the MVP small and traceable for the academic submission.
 | --- | --- | --- | --- |
 | RF-01 | Functional | Health check | `GET /health` returns a successful JSON response. |
 | RF-02 | Functional | Create work item | `POST /work-items` persists a valid work item and returns `201`. |
-| RF-03 | Functional | List work items | `GET /work-items` returns persisted work items. |
+| RF-03 | Functional | List work items | `GET /work-items` returns persisted work items in ascending ID order; optional scalar `status` and `priority` enums combine with AND. Omitted filters do not restrict; no matches or an empty database return `200` with `[]`. Invalid, empty, or literal `null` values return `422` at the query parameter; repeated parameters use and validate the last occurrence. Queries preserve stored data and timestamps. |
 | RF-04 | Functional | Retrieve work item | `GET /work-items/{id}` returns an existing item or `404`. |
 | RF-05 | Functional | Update work item | `PATCH /work-items/{id}` partially updates status, priority, or other allowed fields. |
 | RF-06 | Functional | Delete work item | `DELETE /work-items/{id}` removes an item and returns `204`. |
@@ -20,7 +20,7 @@ This backlog keeps the MVP small and traceable for the academic submission.
 | --- | --- | --- | --- |
 | RNF-01 | Non-functional | Local-first persistence | The API runs locally with SQLite and no external services. |
 | RNF-02 | Non-functional | Validation | Pydantic validates enum fields, required title, tags, and metadata shape. |
-| RNF-03 | Non-functional | Automated tests | Tests cover health, CRUD, validation errors, missing items, timestamps, metadata, tags, and classification. |
+| RNF-03 | Non-functional | Automated tests | Tests cover health, CRUD, validation errors, list filters and query validation, repeated scalar parameters, ascending ID ordering, data preservation, missing items, timestamps, metadata, tags, and classification. |
 | RNF-04 | Non-functional | Public-safe configuration | No credentials, external AI provider variables, or private context are required. |
 | RNF-05 | Non-functional | Documentation | README and docs explain setup, architecture, decisions, prompt traceability, and limitations. |
 

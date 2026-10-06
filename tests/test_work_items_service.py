@@ -1,8 +1,14 @@
 from typing import Any
 
+import pytest
 from sqlalchemy.orm import Session
 
-from app.schemas.work_items import WorkItemCreate, WorkItemUpdate
+from app.schemas.work_items import (
+    WorkItemCreate,
+    WorkItemPriority,
+    WorkItemStatus,
+    WorkItemUpdate,
+)
 from app.services import work_items as work_item_service
 
 
@@ -53,6 +59,95 @@ def test_service_list_returns_multiple_items(db_session: Session) -> None:
     second = _create_work_item(db_session, title="Second work item")
 
     assert work_item_service.list_work_items(db_session) == [first, second]
+
+
+@pytest.mark.parametrize(
+    ("status", "priority", "expected_titles"),
+    [
+        (None, None, ["A", "B", "C", "D"]),
+        (WorkItemStatus.OPEN, None, ["A", "B"]),
+        (None, WorkItemPriority.HIGH, ["A", "C"]),
+        (WorkItemStatus.OPEN, WorkItemPriority.HIGH, ["A"]),
+        (WorkItemStatus.ARCHIVED, WorkItemPriority.CRITICAL, []),
+    ],
+)
+def test_service_list_filters(
+    db_session: Session,
+    status: WorkItemStatus | None,
+    priority: WorkItemPriority | None,
+    expected_titles: list[str],
+) -> None:
+    items = [
+        _create_work_item(db_session, title="A", status="open", priority="high"),
+        _create_work_item(db_session, title="B", status="open", priority="low"),
+        _create_work_item(db_session, title="C", status="done", priority="high"),
+        _create_work_item(
+            db_session, title="D", status="in_progress", priority="critical"
+        ),
+    ]
+
+    listed = work_item_service.list_work_items(
+        db_session, status=status, priority=priority
+    )
+
+    assert listed == [item for item in items if item.title in expected_titles]
+    assert [item.title for item in listed] == expected_titles
+
+
+@pytest.mark.parametrize("status", list(WorkItemStatus))
+def test_service_list_filters_accept_each_status(
+    db_session: Session, status: WorkItemStatus
+) -> None:
+    items = [
+        _create_work_item(db_session, title=value.value, status=value)
+        for value in WorkItemStatus
+    ]
+
+    assert work_item_service.list_work_items(db_session, status=status) == [
+        item for item in items if item.status == status
+    ]
+
+
+@pytest.mark.parametrize("priority", list(WorkItemPriority))
+def test_service_list_filters_accept_each_priority(
+    db_session: Session, priority: WorkItemPriority
+) -> None:
+    items = [
+        _create_work_item(db_session, title=value.value, priority=value)
+        for value in WorkItemPriority
+    ]
+
+    assert work_item_service.list_work_items(db_session, priority=priority) == [
+        item for item in items if item.priority == priority
+    ]
+
+
+@pytest.mark.parametrize(
+    ("status", "priority"),
+    [
+        (WorkItemStatus.OPEN, None),
+        (None, WorkItemPriority.HIGH),
+        (WorkItemStatus.OPEN, WorkItemPriority.HIGH),
+    ],
+)
+def test_service_list_valid_filters_on_empty_database(
+    db_session: Session,
+    status: WorkItemStatus | None,
+    priority: WorkItemPriority | None,
+) -> None:
+    assert (
+        work_item_service.list_work_items(db_session, status=status, priority=priority)
+        == []
+    )
+
+
+def test_service_list_filter_optional_arguments_preserve_db_only_call(
+    db_session: Session,
+) -> None:
+    created = _create_work_item(db_session)
+
+    assert work_item_service.list_work_items(db_session) == [created]
+    assert work_item_service.list_work_items(db_session, None, None) == [created]
 
 
 def test_service_get_existing_and_missing_item(db_session: Session) -> None:
