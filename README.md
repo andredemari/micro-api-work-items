@@ -193,15 +193,17 @@ The classification path is side-effect free: `POST /work-items/classify` uses th
 | --- | --- | --- | --- | --- |
 | `GET` | `/health` | Health check | `200` | Confirms service availability. |
 | `POST` | `/work-items` | Create a work item | `201` | Persists data in SQLite. |
-| `GET` | `/work-items` | List work items | `200` | Returns persisted work items. |
+| `GET` | `/work-items` | List work items | `200` | Optional `status` and `priority` enum filters combine with AND; results stay ordered by ascending ID. No matches return `[]`. |
 | `GET` | `/work-items/{id}` | Get one work item | `200` | Missing items return `404`. |
 | `PATCH` | `/work-items/{id}` | Partially update a work item | `200` | `PUT` is intentionally not included. |
 | `DELETE` | `/work-items/{id}` | Delete a work item | `204` | Missing items return `404`. |
 | `POST` | `/work-items/classify` | Suggest type, priority, and tags | `200` | Does not persist data. |
 
+For `GET /work-items`, omitted filters leave that attribute unrestricted. These two query parameters were previously ignored; they now restrict results or return `422` for unknown values, empty values, or the literal text `null`. They remain scalar parameters: when repeated, the last occurrence is used and validated. See [docs/api_examples.md](docs/api_examples.md) for allowed values and request/response examples.
+
 ## API Example Flow
 
-The `curl` examples below are intended for Bash, Git Bash, macOS/Linux terminals, WSL, or real `curl.exe`. See [docs/api_examples.md](docs/api_examples.md) for detailed Bash and Windows PowerShell examples.
+The `curl` examples below use Bash-compatible quoting for Bash, Git Bash, macOS/Linux terminals, or WSL. For Anaconda Prompt (Windows CMD), use the [copy-and-paste CMD examples](docs/api_examples.md#anaconda-prompt-and-windows-cmd). See [docs/api_examples.md](docs/api_examples.md) for detailed Bash and Windows PowerShell examples.
 
 ```bash
 curl http://127.0.0.1:8000/health
@@ -225,7 +227,7 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `59 passed`.
+Current verification result: `148 passed`.
 
 ```bash
 make test
@@ -241,6 +243,7 @@ The test suite covers:
 
 - health endpoint;
 - API CRUD routes;
+- optional list filters, AND combinations, repeated query parameters, ascending ID ordering, and preservation of stored data;
 - `404` responses for missing work items;
 - `422` validation errors;
 - tags and metadata persistence;
@@ -294,6 +297,7 @@ The next application startup recreates the SQLite schema automatically.
 - If `python` is not recognized in PowerShell, use Anaconda Prompt or the full Anaconda Python executable path.
 - If `uvicorn` is not recognized, run it as a module with `python -m uvicorn app.main:app --reload`.
 - If `curl` behaves differently in PowerShell, use the `Invoke-RestMethod` examples in [docs/api_examples.md](docs/api_examples.md).
+- If pytest fails with `PermissionError` or `WinError 5` mentioning `pytest-current`, see the [CMD temporary-directory workaround](docs/api_examples.md#pytest-temporary-directory-permission-error-in-cmd).
 - If the API returns database-related errors after manual file changes, stop the server, remove `data/work_items.db`, and start the server again.
 - `.env.example` is documentation only; environment variables must be set in the operating system if you want to override defaults.
 - No runtime external LLM provider is used, so no AI provider credentials are needed.
@@ -340,7 +344,7 @@ It checks tracked and staged files, known incident paths, local artifacts, struc
 
 ## Next Steps
 
-- Add pagination and simple filters for list endpoints.
+- Add pagination for list endpoints.
 - Add Alembic migrations if schema evolution becomes necessary.
 - Add richer validation rules for tags and metadata.
 - Add deployment documentation for a non-local environment.

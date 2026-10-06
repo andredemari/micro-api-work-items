@@ -57,7 +57,7 @@ an API change:
 | ID | Item | Why it may help later | Stop rule |
 | --- | --- | --- | --- |
 | REF-009 | Rename `app/services/work_items.py` to `work_item_service.py` | Improves naming consistency with singular domain language. | Do only if imports remain behavior-preserving and tests pass. |
-| REF-010 | Add pagination or simple filters | Makes list behavior more realistic for larger local data sets. | Do not add until current MVP is submitted and API change is approved. |
+| REF-010 | Add pagination; simple filters implemented | Optional `status` and `priority` filters now restrict list results; pagination remains a possible future improvement for larger local data sets. | Do not add pagination until current MVP is submitted and API change is approved. |
 | REF-011 | Add Alembic migrations | Helps if schema evolution becomes necessary. | Do not add for the current SQLite course MVP. |
 | REF-012 | Improve tag and metadata validation | Tightens input quality after basic CRUD is accepted. | Keep response shape stable unless separately approved. |
 | REF-013 | Revisit identifier approach | UUIDs may be useful for distributed or public multi-system integration. | Do not replace integer IDs unless external identifier semantics are required. |

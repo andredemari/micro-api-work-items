@@ -2,7 +2,12 @@ from sqlalchemy.orm import Session
 
 from app.models.work_item_model import WorkItem
 from app.repositories import work_item_repository
-from app.schemas.work_items import WorkItemCreate, WorkItemUpdate
+from app.schemas.work_items import (
+    WorkItemCreate,
+    WorkItemPriority,
+    WorkItemStatus,
+    WorkItemUpdate,
+)
 
 
 def create_work_item(db: Session, data: WorkItemCreate) -> WorkItem:
@@ -12,9 +17,13 @@ def create_work_item(db: Session, data: WorkItemCreate) -> WorkItem:
     return work_item_repository.create_work_item(db, values)
 
 
-def list_work_items(db: Session) -> list[WorkItem]:
-    """Return all persisted work items ordered by identifier."""
-    return work_item_repository.list_work_items(db)
+def list_work_items(
+    db: Session,
+    status: WorkItemStatus | None = None,
+    priority: WorkItemPriority | None = None,
+) -> list[WorkItem]:
+    """Return matching work items ordered by identifier."""
+    return work_item_repository.list_work_items(db, status=status, priority=priority)
 
 
 def get_work_item(db: Session, work_item_id: int) -> WorkItem | None:

@@ -22,6 +22,7 @@ The course PriorityAdvisor concept is represented by the local deterministic cla
 
 - Health check endpoint.
 - CRUD endpoints under `/work-items`.
+- Optional scalar `status` and `priority` filters for `GET /work-items`, combined with AND.
 - Partial updates with `PATCH /work-items/{id}`.
 - Local SQLite persistence.
 - Pydantic v2 validation.
@@ -70,7 +71,9 @@ Use this checklist as a project validation reference.
 
 - [ ] `GET /health` returns a successful response.
 - [ ] `POST /work-items` creates and persists a work item.
-- [ ] `GET /work-items` lists persisted work items.
+- [ ] `GET /work-items` lists persisted work items in ascending ID order; omitted filters preserve all objects, and valid `status` and `priority` filters restrict results with AND.
+- [ ] List queries return `200` with `[]` when no items match or the database is empty, without modifying records or timestamps.
+- [ ] Unknown, empty, or literal `null` filter values return `422` at `["query", "status"]` or `["query", "priority"]`; repeated scalar parameters use and validate the last occurrence.
 - [ ] `GET /work-items/{id}` returns a persisted work item by id.
 - [ ] `PATCH /work-items/{id}` partially updates a persisted work item.
 - [ ] `DELETE /work-items/{id}` deletes a persisted work item.
@@ -105,6 +108,7 @@ Use this checklist as a project validation reference.
 - [ ] Tests cover the health endpoint.
 - [ ] Tests cover creating a work item.
 - [ ] Tests cover listing work items.
+- [ ] List tests cover every allowed status and priority, omitted and individual filters, AND combinations, empty results, invalid values, repeated parameters, explicit ascending ID ordering, and data preservation.
 - [ ] Tests cover retrieving a work item by id.
 - [ ] Tests cover partial updates with `PATCH`.
 - [ ] Tests cover deleting a work item.

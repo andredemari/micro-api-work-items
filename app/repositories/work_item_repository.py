@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.work_item_model import WorkItem, utc_now
+from app.schemas.work_items import WorkItemPriority, WorkItemStatus
 
 
 def create_work_item(db: Session, values: Mapping[str, Any]) -> WorkItem:
@@ -17,9 +18,17 @@ def create_work_item(db: Session, values: Mapping[str, Any]) -> WorkItem:
     return work_item
 
 
-def list_work_items(db: Session) -> list[WorkItem]:
-    """Return all persisted work items ordered by identifier."""
+def list_work_items(
+    db: Session,
+    status: WorkItemStatus | None = None,
+    priority: WorkItemPriority | None = None,
+) -> list[WorkItem]:
+    """Return matching work items ordered by identifier."""
     statement = select(WorkItem).order_by(WorkItem.id)
+    if status is not None:
+        statement = statement.where(WorkItem.status == status)
+    if priority is not None:
+        statement = statement.where(WorkItem.priority == priority)
     return list(db.scalars(statement).all())
 
 
