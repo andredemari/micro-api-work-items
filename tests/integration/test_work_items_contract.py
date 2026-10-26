@@ -96,7 +96,9 @@ def test_nested_metadata_roundtrip_and_omitted_patch_fields(
     created = _create(client)
     expected_metadata = _payload()["metadata"]
 
-    assert _read(client, created["id"]) == created
+    assert json.dumps(_read(client, created["id"]), sort_keys=True) == json.dumps(
+        created, sort_keys=True
+    )
     assert _snapshot() == [created]
 
     # JSON comparison also distinguishes booleans from numeric replacements.
@@ -114,20 +116,67 @@ def test_nested_metadata_roundtrip_and_omitted_patch_fields(
 
     assert response.status_code == 200
     updated = response.json()
-    assert updated == {
+    expected_updated = {
         **created,
         "status": "in_progress",
         "updated_at": updated["updated_at"],
     }
+    assert json.dumps(updated, sort_keys=True) == json.dumps(
+        expected_updated, sort_keys=True
+    )
     assert (
         datetime.fromisoformat(updated["updated_at"])
         >= datetime.fromisoformat(created["updated_at"])
     )
-    assert _read(client, created["id"]) == updated
+    assert json.dumps(_read(client, created["id"]), sort_keys=True) == json.dumps(
+        expected_updated, sort_keys=True
+    )
     assert _snapshot() == [updated]
     assert (
         json.dumps(_snapshot()[0]["metadata"], sort_keys=True)
         == expected_json
+    )
+
+
+def test_explicit_empty_patch_values_are_persisted_and_listed(
+    client: TestClient,
+) -> None:
+    # PATCH-EMPTY: explicit empty values replace, rather than preserve, prior values.
+    target = _create(client, title="Clear optional fields")
+    other = _create(client, title="Unrelated", status="done", priority="high")
+    assert target["description"] and target["tags"] and target["metadata"]
+    changes = {
+        "description": "", "tags": [], "metadata": {},
+        "status": "done", "priority": "low",
+    }
+
+    response = client.patch(f"/work-items/{target['id']}", json=changes)
+
+    assert response.status_code == 200
+    updated = response.json()
+    expected = {**target, **changes, "updated_at": updated["updated_at"]}
+    assert json.dumps(updated, sort_keys=True) == json.dumps(expected, sort_keys=True)
+    assert datetime.fromisoformat(updated["updated_at"]) >= datetime.fromisoformat(
+        target["updated_at"]
+    )
+    assert json.dumps(_read(client, target["id"]), sort_keys=True) == json.dumps(
+        expected, sort_keys=True
+    )
+    assert json.dumps(_snapshot(), sort_keys=True) == json.dumps(
+        [expected, other], sort_keys=True
+    )
+
+    for parameters, matches in (
+        ({"status": "open", "priority": "high"}, []),
+        ({"status": "done", "priority": "low"}, [expected]),
+    ):
+        listed = client.get("/work-items", params=parameters)
+        assert listed.status_code == 200
+        assert json.dumps(listed.json(), sort_keys=True) == json.dumps(
+            matches, sort_keys=True
+        )
+    assert json.dumps(_snapshot(), sort_keys=True) == json.dumps(
+        [expected, other], sort_keys=True
     )
 
 

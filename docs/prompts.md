@@ -165,3 +165,102 @@ integration checks for resource boundaries. Keep candidate sets separate,
 compare over the same denominator, and report remaining gaps and limitations.
 Do not assume a 100% goal or install tools without authorization.
 ```
+
+
+## Historical A/B requests — 2026-10-24
+
+These are the retained task inputs to the read-only auxiliary design session, not the current 2.x skills. They are reproduced as text below with newline normalization only; no personal filesystem paths occur in them. The integrating conversation subsequently reviewed, wrote and executed the proposals. Original historical skills had no version number and were identified by their preserved hashes.
+
+| Experiment | Inputs and distinct contribution | Initial adjustments |
+| --- | --- | --- |
+| A, functional | Contracts/partitions/boundaries; 32 integration cases; nested JSON, omitted PATCH fields, post-update filter membership, harmless invalid/missing requests and classification without persistence | Initial cases passed; no corrective refinement. Coverage did not increase |
+| B, structural | Original measured gaps; 7 cases: 4 integration and 3 unit; directory decisions, real lifespan/schema and success/error session cleanup | Initial cases passed; no corrective refinement. Measured app denominator reached 258 statements /38 destinations |
+
+A's 32 cases and B's 7 are not counts for the 2.x evaluation. Baseline+A180, baseline+B155 and union187 are historical executed sets. Examples of their distinct oracles and measurement limits remain in [the testing guide](testing.md#historical-experiments). Later skill refinements must not be credited retroactively to A/B.
+
+### A — retained original request
+
+```text
+Use $api-integration-functional in this existing academic API checkout. This is a sequential read-only design session; the integrating conversation is the only writer. Do not edit files, run tests or imports, install dependencies, read credentials, create other agents, commit or publish.
+First report whether api-integration-functional appeared in the available skill catalog (name/path) and actually read its SKILL.md. Separate automatic discovery from explicit file loading; do not claim discovery merely because this prompt names it. Read applicable instructions, docs/testing.md, docs/api_examples.md, docs/mvp_scope.md, app/schemas/work_items.py and existing tests only as necessary for contracts/fixtures/deduplication. Do not use coverage or implementation branches to select cases.
+Task: propose a compact set of pytest tests with stronger oracles for existing behavior, not new functionality. Consider nested JSON metadata across create/read/storage, PATCH preserving omitted fields, filter membership after a committed PATCH, classification leaving a preexisting record unchanged, title boundaries 0/1/2/199/200/201 and invalid create/PATCH inputs. Existing filter tests already exercise enum combinations, query errors and ordering; do not repeat them merely for counts. Expected behavior: valid title length 1..200; invalid requests 422 with body field location and no write; metadata round-trips; omitted PATCH fields remain; missing IDs 404 preserve unrelated items; classification has no persistence effect. Explicit null in PATCH is unresolved: defer that case.
+Before code, give case ID -> contract/partition/boundary -> expected response and stored state -> distinct gain or reason to reject. Then return proposed complete test source as text, with the smallest supporting fixture if required. Reuse the in-memory client setup; do not combine client and db_session fixtures. A fresh SQLAlchemy session can check committed state but is not evidence of another physical connection or process. Assert content and errors, not only HTTP status. Limit the proposal to justified additions; no desired test count, no production changes. One subsequent refinement at most. Do not execute checks; the integrator will record real results. State model/configuration only if observable.
+```
+
+### B — retained original request
+
+```text
+Use $api-integration-structural in this same existing checkout, as the sequential B experiment. Remain read-only: no edits, tests/imports, installs, services, other agents, credentials, commits or publication. The integrating conversation is the only writer.
+Confirm whether this skill is in the available catalog and read its actual SKILL.md. Report discovery versus explicit loading separately. Use the ORIGINAL measured baseline, not coverage expanded by experiment A: Coverage.py 7.17.0, --branch --source=app, 148 baseline tests, 248/258 executable statements and 36/38 branch destinations. Missing app/db/database.py lines 18,23,44,46,51,52,53,55; missing branches [17,18] and [20,23]. app/main.py lifespan lines 14,15 are also missing. Read these relevant code files, docs/testing.md and README setup contract. Do not read another implementation or propose production changes.
+Expected behavior before code: file-backed SQLite setup creates the requested parent directory; memory/non-SQLite URLs do not create directories; application startup creates its schema; request sessions close on success and consumer error. Use exclusively synthetic data and temporary test resources. No use of the application's default engine/database for persistence; justify how isolation is established before TestClient lifespan runs. No installed database drivers or server dependencies. Prefer useful unit checks on isolated helper decisions and real integration checks where a resource boundary is required. Avoid duplicate business/filter matrices already present.
+Return gap -> documented contract -> expected observable result -> proposed test and why its oracle is meaningful. Then provide complete source proposals, with levels/markers and any minimal fixtures. Cover resource cleanup on errors with an observable assertion, not coverage alone. No desired coverage percentage or test count. Explicitly defer unsupported contracts. Do not execute; the integrator will preserve output, review and run the tests. At most one refinement will follow. This session retains A's context; do not claim independent or blinded comparison.
+```
+
+## Revised skill evaluation requests
+
+The following are **sanitized excerpts** of the new 2026-10-26 requests: absolute checkout/evidence paths and routing wrappers are omitted. Exact prompts and version/hash/read evidence were retained outside the public tree. They are not replacements for A/B. All five skills were named explicitly; native discovery and another client's support were not demonstrated by these reads.
+
+### Functional — explicit use
+
+```text
+Use $api-integration-functional and read its actual SKILL.md.
+Report version/hash and catalog availability separately from explicit loading.
+Assess create -> partial update -> list/filter from contracts and existing tests.
+Map partitions, expected response and stored effects before proposing code.
+Reject duplicates; a justified no-addition result is valid. Do not select by
+coverage or invent PATCH-null policy. Return proposals as text only; the
+integrator alone writes and executes authorized checks.
+```
+
+The review identified explicit empty replacement as distinct from omission. One new integration case was accepted after oracle review. A single instruction refinement (2.0.0 ->2.0.1) clarified that execution prerequisites are not required for design-only work; the revised file was explicitly reread, not proven reloaded through a catalog.
+
+### Structural — explicit use
+
+```text
+Use $api-integration-structural and read its actual SKILL.md.
+Inspect the newly measured parent coverage, source revision, contracts and
+existing assertions. Propose a case only for a meaningful uncovered executable
+gap; separate risk/oracle suggestions. Keep the denominator fixed.
+Do not edit or execute during this read-only selection task.
+```
+
+No coverage-selected addition was justified. The reviewer requested provenance absent from Coverage.py JSON; a companion linked the preserved command, 191 case IDs, report hash and unchanged source revision. This was an input-evidence correction without remeasurement, not a fabricated coverage gap.
+
+### Oracle review — explicit use
+
+```text
+Use $test-oracle-review and read its actual SKILL.md.
+Review the selected metadata/PATCH case, success/error session cleanup, and
+two HTTP lifecycle cases against contracts and their helper assertions.
+Identify only concrete blocks/improvements/style with scenario and consequence.
+Trace the first decisive assertion and checks not reached after a failure.
+No execution or edits during this review; do not invent desired product policy.
+```
+
+Accepted findings strengthened JSON typing in GET/PATCH and validated complete creation fields/defaults before system baselines. These static oracle gaps were not demonstrated defects in production; overlap across real boundaries was retained.
+
+### Bounded mutation — explicit use
+
+```text
+Use $bounded-mutation-evaluation and read its actual SKILL.md.
+Reproduce only the known get_db no-close operator in an owned disposable copy.
+Run the two focal lifecycle cases without mutation first, then the identical
+selection against the one-location mutant, with 60s per subprocess.
+Never edit the delivery checkout. Classify assertion failures, survivors,
+invalid/setup/timeout results separately and verify cleanup.
+```
+
+The valid control passed; both mutated cases failed at close-call verification. A prior operator precondition stopped before mutation because of LF/CRLF matching. Its preserved control/failure was not counted as detection. A later XML-summary parsing correction used existing assertion traces, not another test run.
+
+### HTTP lifecycle — explicit use
+
+```text
+Use $http-system-lifecycle and read its actual SKILL.md.
+Execute the existing real HTTP journey and normal restart using the project
+profile and owned launcher. Use exclusive synthetic SQLite, reserved loopback
+port, bounded readiness/requests/stop/lifetime and source/PID checks.
+Verify normal exit and owned port/file release. No existing user server,
+deployment, crash qualification or global changes.
+```
+
+The two strengthened system cases passed; the focal task's three server processes stopped normally. Final regression and preservation checks are reported separately in [the guide](testing.md#current-skill-evaluation--2026-10-26). No causal ranking of prompts/skills or independent human runtime audit is implied.

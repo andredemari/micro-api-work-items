@@ -1,14 +1,49 @@
 ---
 name: http-system-lifecycle
-description: Exercise a Python application as an owned separate HTTP process with synthetic SQLite, readiness, normal restart and cleanup; use for loopback system tests, not deployment or crash qualification.
+description: Exercise an owned Python HTTP process with isolated storage, readiness, normal restart and cleanup. Use for real loopback system checks, not an existing user server or crash qualification.
+license: Apache-2.0
 metadata:
-  version: "1.0.1"
+  version: "2.0.0"
 ---
-# Owned HTTP system lifecycle
-Use the current task limits and tests/http_process_support.py. Establish a production snapshot, explicit interpreter, temporary database path and controlled environment before importing the app. Reserve an owned loopback socket on port0; verify actual endpoint, PID and source origins. Never connect to an existing user server/database.
-Wait for explicit health/identity readiness within15s. Bound requests to5s, graceful stop to10s and each server to90s. No reload, multiple workers, external binds or arbitrary sleeps used as readiness proof. Always finalize in finally; forced termination is a failure of normal shutdown, not a successful persistence test.
-For normal restart, first confirm the old process ended, then reuse only the same synthetic database with a new process/port and compare committed content. Preserve logs, identifiers and partial results. Check port and file release; stop only owned resources. Never present normal restart as crash/power-loss durability or two clients as authenticated users. Do not install services or alter global/network/security settings. At most one motivated refinement.
+# Own the HTTP test lifecycle
 
-Record requirement/oracle status -> case/operator -> executed result, skill version/hash, rework, human intervention and limitations in the existing testing guide/private evidence. See [method attribution](../../../docs/testing.md#method-origins).
+## When to use
+Validate the process/HTTP/storage boundary and normal restart when in-process clients cannot demonstrate that boundary.
 
-Protect acquisition of logs/process handles as well as their release. Never discard a live handle when shutdown is unconfirmed; preserve partial HTTP results before later operations can fail.
+## Inputs and prerequisites
+Obtain the application snapshot/entry point, existing launcher/test support, interpreter/dependencies, explicit health response, synthetic storage path, readiness/request/stop/lifetime limits and evidence destination. Needed capabilities: launch and retain a child handle, reserve loopback, request HTTP and verify resource release. Read the project profile; do not assume another client's shell or tools.
+
+## Workflow
+1. Establish configuration before application imports. Use exclusive temporary storage and a controlled environment; inspect the launcher before running it.
+2. Protect acquisition as well as release of sockets, logs and process handles. Bind and retain an owned loopback port, preferably assigned by the OS; do not race by probing a port then releasing it before launch.
+3. Bound readiness polling by deadline and verify health plus endpoint identity, PID/source origins and database path. Process existence or a fixed sleep is not readiness proof.
+4. Execute the authorized journey with request timeouts; preserve each response before later operations can fail. Assert typed content, errors and relevant stored state.
+5. For normal restart, confirm the old process ended before starting another on the same synthetic database. Compare complete committed records, not only response status.
+6. Finalize in `finally`: request normal stop, wait within limits and retain the handle if exit is uncertain. Use only authorized fallback termination on that exact handle. Record forced exit as failure of normal shutdown. Verify owned port/file release and preserve partial evidence.
+
+## Outputs and verification
+Return interpreter/source, owned process/endpoint/storage, readiness and operation results, stop reason/exit, release checks and limitations. Record version/hash/read/use. A failed acquisition or uncertain cleanup is a result to investigate, not a successful lifecycle.
+
+## Guardrails and stop conditions
+Never connect to the user's running application/database, bind externally, select processes by name, install services or change firewall/global settings. Stop if ownership, isolation, authorization or remaining cleanup time is uncertain. Normal restart does not prove crash recovery, power-loss durability, multiple identities or offline inference.
+
+## Example
+For a project-provided `http_process` fixture whose launcher enforces the supplied limits:
+```python
+server = http_process.start()
+try:
+    response = server.client.post("/work-items", json={"title": "Synthetic note"})
+    assert response.status_code == 201
+    created = response.json()
+    server.stop()
+    assert server.stops[-1]["normal"] is True
+    server.start()
+    response = server.client.get(f"/work-items/{created['id']}")
+    assert response.status_code == 200
+    assert response.json() == created
+finally:
+    server.stop()
+```
+This fixture is an input capability, not bundled production code or a universal API contract. The task supplies concrete deadlines and health semantics.
+
+Original Python lifecycle workflow. Inspect/propose/execute/closeout boundaries were informed by the preserved MIT testing/OpenSpec references; their CLI, governance and dependencies are not adopted. Upstream access is optional.

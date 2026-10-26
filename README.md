@@ -28,9 +28,13 @@ A work item is a generic task-like record that can represent a task, bug, improv
 
 The objective is to demonstrate a simple backend MVP with clear scope, local persistence, validation, tests, documentation, and a Conventional Commit history.
 
+The same backend is also a bounded test-engineering example: contract-led and coverage-led design, explicit use of reusable testing skills, and review of meaningful assertions without runtime AI dependencies.
+
 ## Academic Context
 
 This repository was created as an AI-assisted mini-project for the first practical activity of the postgraduate course "Software Engineering: Automation and Innovation with Generative AI" at UFG/AKCIT.
+
+Later iterations reuse this original API to study test organization, integration/system boundaries and reusable testing instructions. Historical experiments and newer skill evaluations are recorded separately in [the testing guide](docs/testing.md).
 
 The course reference problem is a "Micro-API de Tarefas". This project implements the same small API idea using the more generic term "work item", so the API can represent tasks, bugs, improvements, research items, operation items, and incidents without becoming domain-specific.
 
@@ -227,9 +231,9 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Baseline verification result: `148 passed`.
+Historical baseline: `148 passed`; the published testing milestone recorded `193` regression cases and `12` separate characterization captures. The local skill-portability evaluation on 2026-10-26 recorded `194 passed`; it is separate from those historical runs.
 
-See [the testing guide](docs/testing.md) for test levels, isolated execution, optional coverage, and the five repo-local testing skills.
+See [the testing guide](docs/testing.md) for current commands, the project profile, test levels, historical results and five repo-local testing skills. [Portability by capability](docs/skills_portability.md) separates documented client support from actual local evaluation.
 
 ```bash
 make test
@@ -257,7 +261,10 @@ The test suite covers:
 - deterministic PriorityAdvisor output;
 - classification non-persistence;
 - isolated SQLite test database;
-- deterministic safety gate checks.
+- deterministic safety gate checks;
+- owned loopback HTTP processes, invalid requests without writes and persistence after normal restart.
+
+Characterizations are selected separately; their completion does not approve the observed overwrite, anonymous-access or repeated-create behavior. Neither normal restart nor a green suite establishes crash recovery, security or multiple-user isolation.
 
 ## Documentation Map
 
@@ -271,7 +278,9 @@ The test suite covers:
 - [docs/security_checks.md](docs/security_checks.md): deterministic safety-check workflow.
 - [docs/security_cleanup_runbook.md](docs/security_cleanup_runbook.md): cleanup guidance for accidental sensitive commits.
 - [docs/information_governance.md](docs/information_governance.md): public-safe information handling guide.
-- [docs/prompts.md](docs/prompts.md): sanitized CO-STAR-style prompt traceability.
+- [docs/prompts.md](docs/prompts.md): historical A/B task inputs, sanitized newer requests and legacy CO-STAR-style prompt traceability.
+- [docs/testing.md](docs/testing.md): execution, test profile, skill use, experiments and limitations.
+- [docs/skills_portability.md](docs/skills_portability.md): canonical source, capabilities and documented client differences.
 - [docs/refactor_backlog.md](docs/refactor_backlog.md): post-course maintainability roadmap.
 - [docs/release_checklist.md](docs/release_checklist.md): final submission checklist.
 
@@ -355,13 +364,13 @@ Future versions may expose the API as a reusable backend service for external cl
 
 ## How Generative AI Was Used
 
-Codex/GPT 5.4 and 5.5 were used as AI-assisted development support for scope planning, architecture discussion, implementation scaffolding, test design, documentation drafting, review, and refinement.
+The original development record credits Codex/GPT 5.4 and 5.5 for scope planning, architecture discussion, scaffolding, test design, documentation and refinement. These are retained historical model labels, not a claim about every later evaluation.
 
-Human review controlled final scope decisions, preserving a local deterministic PriorityAdvisor instead of adding runtime LLM dependencies, validating tests, reviewing documentation, and rejecting over-scoped ideas.
+Human scope and publication decisions preserved a local deterministic PriorityAdvisor rather than runtime LLM dependencies. Later test work used one integrating conversation for edits/execution and bounded read-only assisted reviews. Five instruction-only skills guide contract selection, measured structural gaps, oracle review, controlled mutation and owned HTTP lifecycle. Their use is evaluated through recorded tasks and results, not inferred from file creation or test counts.
 
-Risk mitigation included avoiding credentials, avoiding paid runtime AI providers, avoiding external data sharing, keeping runtime behavior local and deterministic, and requiring tests and review before acceptance.
+Testing uses synthetic inputs and isolated resources, keeps raw execution records out of the public tree and preserves license/provenance. Assisted static reviews are not independent human runtime audits. Local API execution does not imply offline model inference, and written instructions do not enforce the executor's permissions.
 
-See [docs/prompts.md](docs/prompts.md) for generic CO-STAR prompt examples used for academic reproducibility.
+See [docs/prompts.md](docs/prompts.md) for retained A/B requests and clearly identified sanitized examples; [docs/testing.md](docs/testing.md) separates their historical results from the newer skill evaluation.
 
 ## Packaging And Submission Notes
 
