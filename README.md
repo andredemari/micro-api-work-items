@@ -227,7 +227,9 @@ curl -X POST http://127.0.0.1:8000/work-items/classify \
 
 ## Tests
 
-Current verification result: `148 passed`.
+Baseline verification result: `148 passed`.
+
+See [the testing guide](docs/testing.md) for test levels, isolated execution, optional coverage, and the five repo-local testing skills.
 
 ```bash
 make test

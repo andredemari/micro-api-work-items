@@ -1,3 +1,5 @@
+import pytest
+
 from fastapi.testclient import TestClient
 
 
@@ -9,3 +11,6 @@ def test_health_check_returns_success(client: TestClient) -> None:
         "status": "ok",
         "service": "micro-api-work-items",
     }
+
+
+pytestmark = [pytest.mark.integration, pytest.mark.api, pytest.mark.smoke]

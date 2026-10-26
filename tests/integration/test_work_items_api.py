@@ -327,3 +327,6 @@ def test_list_filters_openapi_declares_optional_scalar_enums(client: TestClient)
         enum_type = WorkItemStatus if parameter["name"] == "status" else WorkItemPriority
         assert enum_schema["type"] == "string"
         assert enum_schema["enum"] == [value.value for value in enum_type]
+
+
+pytestmark = [pytest.mark.integration, pytest.mark.api]

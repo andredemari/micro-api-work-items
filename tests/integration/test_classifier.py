@@ -1,3 +1,5 @@
+import pytest
+
 from fastapi.testclient import TestClient
 
 
@@ -37,3 +39,6 @@ def test_classifier_does_not_persist_work_items(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert client.get("/work-items").json() == []
+
+
+pytestmark = [pytest.mark.integration, pytest.mark.api]

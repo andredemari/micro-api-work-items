@@ -1,3 +1,5 @@
+import pytest
+
 import subprocess
 import sys
 from pathlib import Path
@@ -217,9 +219,6 @@ def test_raw_sql_indicator_is_warning_only(tmp_path: Path) -> None:
     assert not failure_ids(findings)
 
 
-def test_default_hook_python_command_uses_current_interpreter() -> None:
-    assert sys.executable in default_python_command()
-    assert default_python_command() != "python"
 
 
 def test_install_hooks_use_selected_python_command(tmp_path: Path) -> None:
@@ -249,3 +248,6 @@ def test_install_hooks_refuse_to_overwrite_existing_hooks(tmp_path: Path) -> Non
 
     assert result == 1
     assert hook_path.read_text(encoding="utf-8") == "#!/bin/sh\ncustom\n"
+
+
+pytestmark = [pytest.mark.integration, pytest.mark.tooling]

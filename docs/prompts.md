@@ -36,7 +36,7 @@ The prompts below use a compact CO-STAR-like structure:
 | P-004 | Persistence | `app/db/database.py`, `app/models/`, `app/repositories/` | Service and repository tests |
 | P-005 | PriorityAdvisor | `app/services/priority_advisor.py`, `app/providers/priority/local_provider.py` | Deterministic classifier and provider tests |
 | P-006 | Documentation | `README.md`, `docs/api_examples.md`, `docs/decisions.md` | Reproducible setup, examples, decisions |
-| P-007 | Review and safety | `scripts/safety_check.py`, `scripts/safety_policy.json`, `tests/test_safety_check.py` | Safety-check tests and release gate |
+| P-007 | Review and safety | `scripts/safety_check.py`, `scripts/safety_policy.json`, `tests/integration/test_safety_check.py`, `tests/unit/test_safety_helpers.py` | Safety-check tests and release gate |
 | P-008 | Final course readiness | `docs/course_submission_traceability.md`, `docs/release_checklist.md` | Requirement-to-artifact mapping |
 
 ## Representative Sanitized Prompts
@@ -138,3 +138,30 @@ The prompts below use a compact CO-STAR-like structure:
 - Audience: Course reviewer.
 - Response: Course traceability, release checklist updates, and a short
   pre-publication review summary.
+
+
+## Reusable Test Requests
+
+These are condensed, sanitized request examples derived from the testing workflow, not verbatim execution transcripts or evidence that a particular host loaded a skill. Historical prompt descriptions above are retained; artifact paths reflect the current test layout. See [the testing guide](testing.md) for levels, isolation and verification limits.
+
+### Contract-Led Request
+
+```text
+Use $api-integration-functional. Read the API contract and existing tests.
+Before generating cases, define partitions, title boundaries and expected
+responses plus stored-state effects. Propose only distinct gains or stronger
+oracles; preserve the isolated fixtures. Defer unresolved PATCH null rules.
+Run only authorized checks, preserve the initial output and review findings,
+and report real results. Do not change production to make tests pass.
+```
+
+### Coverage-Led Request
+
+```text
+Use $api-integration-structural with the measured baseline and unchanged app
+source. Inspect meaningful missing lines and branches, then derive expected
+results from contracts. Prefer unit checks for isolated decisions and real
+integration checks for resource boundaries. Keep candidate sets separate,
+compare over the same denominator, and report remaining gaps and limitations.
+Do not assume a 100% goal or install tools without authorization.
+```

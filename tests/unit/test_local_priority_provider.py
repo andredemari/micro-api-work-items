@@ -1,3 +1,5 @@
+import pytest
+
 from app.providers.priority.local_provider import suggest_work_item_classification
 from app.schemas.work_items import (
     WorkItemClassificationInput,
@@ -69,3 +71,35 @@ def test_local_provider_normalizes_and_deduplicates_tags() -> None:
     assert result.suggested_type == WorkItemType.RESEARCH
     assert result.suggested_priority == WorkItemPriority.LOW
     assert result.suggested_tags == ["research", "low"]
+
+
+pytestmark = [pytest.mark.unit]
+
+
+# CLS-INPUT: side-effect invariant; does not establish keyword precedence.
+def test_classification_preserves_input_model_and_tags() -> None:
+    payload = WorkItemClassificationInput(
+        title="Research crash", description="urgent backup",
+        tags=[" HIGH ", "high", "", "Ops"],
+    )
+    before = payload.model_dump(mode="json")
+
+    suggest_work_item_classification(payload)
+
+    assert payload.model_dump(mode="json") == before
+
+
+# CLS-ALIAS: results must not share mutable tag state with inputs or each other.
+def test_suggested_tags_do_not_alias_input_or_other_results() -> None:
+    payload = WorkItemClassificationInput(title="Plan notes", tags=[" Notes "])
+    before = payload.model_dump(mode="json")
+    first = suggest_work_item_classification(payload)
+    second = suggest_work_item_classification(payload)
+    expected = second.model_dump(mode="json")
+
+    first.suggested_tags.append("synthetic-client-edit")
+    first.reasons.append("synthetic-client-edit")
+
+    assert payload.model_dump(mode="json") == before
+    assert second.model_dump(mode="json") == expected
+    assert suggest_work_item_classification(payload).model_dump(mode="json") == expected

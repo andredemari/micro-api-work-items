@@ -302,3 +302,6 @@ def test_repository_delete_existing_item(db_session: Session) -> None:
 
 def test_repository_delete_missing_item_returns_false(db_session: Session) -> None:
     assert work_item_repository.delete_work_item(db_session, 999) is False
+
+
+pytestmark = [pytest.mark.integration]

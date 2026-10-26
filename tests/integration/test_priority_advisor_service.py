@@ -1,3 +1,5 @@
+import pytest
+
 from app.schemas.work_items import (
     WorkItemClassificationInput,
     WorkItemPriority,
@@ -69,3 +71,6 @@ def test_priority_advisor_normalizes_and_deduplicates_tags() -> None:
     assert result.suggested_type == WorkItemType.RESEARCH
     assert result.suggested_priority == WorkItemPriority.LOW
     assert result.suggested_tags == ["research", "low"]
+
+
+pytestmark = [pytest.mark.integration]

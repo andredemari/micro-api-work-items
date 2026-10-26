@@ -222,3 +222,6 @@ def test_service_delete_existing_item(db_session: Session) -> None:
 
 def test_service_delete_missing_item_returns_false(db_session: Session) -> None:
     assert work_item_service.delete_work_item(db_session, 999) is False
+
+
+pytestmark = [pytest.mark.integration]

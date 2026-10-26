@@ -63,3 +63,37 @@ def client() -> Generator[TestClient, None, None]:
 
     app.dependency_overrides.clear()
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture()
+def record_observation(tmp_path, request):
+    """Write observations outside the public source tree; not product acceptance."""
+    from datetime import datetime, timezone
+    import json
+    from pathlib import Path
+    import uuid
+
+    def record(case_id, data):
+        destination = Path(os.environ.get("EXTENSION_EVIDENCE", str(tmp_path / "observations")))
+        destination.mkdir(parents=True, exist_ok=True)
+        value = {
+            "case_id": case_id, "nodeid": request.node.nodeid,
+            "oracle_status": "observed-not-product-approval",
+            "recorded_at_utc": datetime.now(timezone.utc).isoformat(), "data": data,
+        }
+        path = destination / (case_id + "-" + uuid.uuid4().hex[:10] + ".json")
+        path.write_text(json.dumps(value, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        return value
+
+    return record
+
+
+@pytest.fixture()
+def http_process(tmp_path, record_observation):
+    from http_process_support import HttpProcess
+
+    process = HttpProcess(tmp_path / "http", record_observation)
+    try:
+        yield process
+    finally:
+        process.stop()

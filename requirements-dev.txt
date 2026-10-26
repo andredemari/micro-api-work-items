@@ -1,0 +1,2 @@
+# Optional line and branch measurement; runtime requirements remain unchanged.
+coverage==7.17.0
